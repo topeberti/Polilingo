@@ -1,0 +1,81 @@
+﻿concept_id;text;option_a;option_b;option_c;correct_option;explanation;difficulty;source
+0ab543d8-e052-425a-8cda-f4d3ede93030;¿Cual de estos números es par?;1;2;3;b;Es un número par porque es divisible entre 2;1;Invented
+0ab543d8-e052-425a-8cda-f4d3ede93030;¿Cual de estos números es par?;4;5;7;a;Es un número par porque es divisible entre 2;1;Invented
+0ab543d8-e052-425a-8cda-f4d3ede93030;¿Cual de estos números es par?;9;11;6;c;Es un número par porque es divisible entre 2;1;Invented
+0ab543d8-e052-425a-8cda-f4d3ede93030;¿Cual de estos números es par?;8;13;15;a;Es un número par porque es divisible entre 2;1;Invented
+0ab543d8-e052-425a-8cda-f4d3ede93030;¿Cual de estos números es par?;17;10;19;b;Es un número par porque es divisible entre 2;1;Invented
+0ab543d8-e052-425a-8cda-f4d3ede93030;¿Cual de estos números es par?;21;23;12;c;Es un número par porque es divisible entre 2;1;Invented
+0ab543d8-e052-425a-8cda-f4d3ede93030;¿Cual de estos números es par?;14;25;27;a;Es un número par porque es divisible entre 2;1;Invented
+0ab543d8-e052-425a-8cda-f4d3ede93030;¿Cual de estos números es par?;29;16;31;b;Es un número par porque es divisible entre 2;1;Invented
+0ab543d8-e052-425a-8cda-f4d3ede93030;¿Cual de estos números es par?;33;35;18;c;Es un número par porque es divisible entre 2;1;Invented
+0ab543d8-e052-425a-8cda-f4d3ede93030;¿Cual de estos números es par?;20;37;39;a;Es un número par porque es divisible entre 2;1;Invented
+775ca50d-de2f-421b-b985-1a47ed2d9972;¿Cual de estos números es impar?;1;2;4;a;Es un número par porque no es divisible entre 2;1;Invented
+775ca50d-de2f-421b-b985-1a47ed2d9972;¿Cual de estos números es impar?;6;3;8;b;Es un número par porque no es divisible entre 2;1;Invented
+775ca50d-de2f-421b-b985-1a47ed2d9972;¿Cual de estos números es impar?;10;12;5;c;Es un número par porque no es divisible entre 2;1;Invented
+775ca50d-de2f-421b-b985-1a47ed2d9972;¿Cual de estos números es impar?;7;14;16;a;Es un número par porque no es divisible entre 2;1;Invented
+775ca50d-de2f-421b-b985-1a47ed2d9972;¿Cual de estos números es impar?;18;9;20;b;Es un número par porque no es divisible entre 2;1;Invented
+775ca50d-de2f-421b-b985-1a47ed2d9972;¿Cual de estos números es impar?;22;24;11;c;Es un número par porque no es divisible entre 2;1;Invented
+775ca50d-de2f-421b-b985-1a47ed2d9972;¿Cual de estos números es impar?;13;26;28;a;Es un número par porque no es divisible entre 2;1;Invented
+775ca50d-de2f-421b-b985-1a47ed2d9972;¿Cual de estos números es impar?;30;15;32;b;Es un número par porque no es divisible entre 2;1;Invented
+775ca50d-de2f-421b-b985-1a47ed2d9972;¿Cual de estos números es impar?;34;36;17;c;Es un número par porque no es divisible entre 2;1;Invented
+775ca50d-de2f-421b-b985-1a47ed2d9972;¿Cual de estos números es impar?;19;38;40;a;Es un número par porque no es divisible entre 2;1;Invented
+5b86f30b-10d7-4e01-9f3e-c5e6fa873dac;2+2;2;3;4;c;Asi son las sumas no se explican;2;Invented
+5b86f30b-10d7-4e01-9f3e-c5e6fa873dac;8+9;10;17;15;b;Asi son las sumas no se explican;2;Invented
+5b86f30b-10d7-4e01-9f3e-c5e6fa873dac;14+2;4;13;16;c;Asi son las sumas no se explican;2;Invented
+5b86f30b-10d7-4e01-9f3e-c5e6fa873dac;0+0;0;45;234;a;Asi son las sumas no se explican;2;Invented
+5b86f30b-10d7-4e01-9f3e-c5e6fa873dac;68+2;70;76;234;a;Asi son las sumas no se explican;2;Invented
+5b86f30b-10d7-4e01-9f3e-c5e6fa873dac;4+7;10;12;11;c;Asi son las sumas no se explican;2;Invented
+5b86f30b-10d7-4e01-9f3e-c5e6fa873dac;90+100;180;190;230;b;Asi son las sumas no se explican;2;Invented
+5b86f30b-10d7-4e01-9f3e-c5e6fa873dac;180+20;765;354;200;c;Asi son las sumas no se explican;2;Invented
+5b86f30b-10d7-4e01-9f3e-c5e6fa873dac;1+1;100;8765;1;c;Asi son las sumas no se explican;2;Invented
+5b86f30b-10d7-4e01-9f3e-c5e6fa873dac;100+0;0;100;876;b;Asi son las sumas no se explican;2;Invented
+b25de07e-f5f8-4c12-91de-2b9f87f2aa7c;10-1;9;34;53;a;Asi son las restas no se explican;2;Invented
+b25de07e-f5f8-4c12-91de-2b9f87f2aa7c;10-2;23;8;61;b;Asi son las restas no se explican;2;Invented
+b25de07e-f5f8-4c12-91de-2b9f87f2aa7c;10-3;12;51;7;c;Asi son las restas no se explican;2;Invented
+b25de07e-f5f8-4c12-91de-2b9f87f2aa7c;10-4;6;23;45;a;Asi son las restas no se explican;2;Invented
+b25de07e-f5f8-4c12-91de-2b9f87f2aa7c;10-5;54;5;32;b;Asi son las restas no se explican;2;Invented
+b25de07e-f5f8-4c12-91de-2b9f87f2aa7c;10-6;14;43;4;c;Asi son las restas no se explican;2;Invented
+b25de07e-f5f8-4c12-91de-2b9f87f2aa7c;10-7;3;2;64;a;Asi son las restas no se explican;2;Invented
+b25de07e-f5f8-4c12-91de-2b9f87f2aa7c;10-8;24;2;62;b;Asi son las restas no se explican;2;Invented
+b25de07e-f5f8-4c12-91de-2b9f87f2aa7c;10-9;25;14;1;c;Asi son las restas no se explican;2;Invented
+b25de07e-f5f8-4c12-91de-2b9f87f2aa7c;10-10;0;15;32;a;Asi son las restas no se explican;2;Invented
+64679f77-ee1a-4fc9-a391-297411a096d5;1x1;42;1;13;b;Porque 1=1;3;Invented
+64679f77-ee1a-4fc9-a391-297411a096d5;1x2;24;23;2;c;Porque 1+1=2;3;Invented
+64679f77-ee1a-4fc9-a391-297411a096d5;1x3;3;32;41;a;Porque 1+1+1=3;3;Invented
+64679f77-ee1a-4fc9-a391-297411a096d5;1x4;41;4;23;b;Porque 1+1+1+1=4;3;Invented
+64679f77-ee1a-4fc9-a391-297411a096d5;1x5;23;41;5;c;Porque 1+1+1+1+1=5;3;Invented
+64679f77-ee1a-4fc9-a391-297411a096d5;1x6;6;23;14;a;Porque 1+1+1+1+1+1=6;3;Invented
+64679f77-ee1a-4fc9-a391-297411a096d5;1x7;41;7;2;b;Porque 1+1+1+1+1+1+1=7;3;Invented
+64679f77-ee1a-4fc9-a391-297411a096d5;1x8;24;4;8;c;Porque 1+1+1+1+1+1+1+1=8;3;Invented
+64679f77-ee1a-4fc9-a391-297411a096d5;1x9;9;13;24;a;Porque 1+1+1+1+1+1+1+1+1=9;3;Invented
+64679f77-ee1a-4fc9-a391-297411a096d5;1x10;13;10;24;b;Porque 1+1+1+1+1+1+1+1+1+1=10;3;Invented
+25acc327-5b97-459a-9b99-1cdea0a03888;100/1;64;56;100;c;Porque 100x1=100;3;Invented
+25acc327-5b97-459a-9b99-1cdea0a03888;100/10;10;63;56;a;Porque 10x10=100;3;Invented
+25acc327-5b97-459a-9b99-1cdea0a03888;200/10;35;20;46;b;Porque 10x20=200;3;Invented
+25acc327-5b97-459a-9b99-1cdea0a03888;300/10;46;53;30;c;Porque 10x30=300;3;Invented
+25acc327-5b97-459a-9b99-1cdea0a03888;400/10;40;53;46;a;Porque 10x40=400;3;Invented
+25acc327-5b97-459a-9b99-1cdea0a03888;500/10;53;50;45;b;Porque 10x50=500;3;Invented
+25acc327-5b97-459a-9b99-1cdea0a03888;600/10;63;45;60;c;Porque 10x60=600;3;Invented
+25acc327-5b97-459a-9b99-1cdea0a03888;700/10;70;54;63;a;Porque 10x70=700;3;Invented
+25acc327-5b97-459a-9b99-1cdea0a03888;800/10;53;80;64;b;Porque 10x80=800;3;Invented
+25acc327-5b97-459a-9b99-1cdea0a03888;900/10;57;86;90;c;Porque 10x90=900;3;Invented
+013b32e7-6924-4706-a311-2f1ab731832d;¿Qué número es negativo?;-1;2;3;a;Porque es menor que 0;4;Invented
+013b32e7-6924-4706-a311-2f1ab731832d;¿Qué número es negativo?;3;-5;6;b;Porque es menor que 0;4;Invented
+013b32e7-6924-4706-a311-2f1ab731832d;¿Qué número es negativo?;7;8;-9;c;Porque es menor que 0;4;Invented
+013b32e7-6924-4706-a311-2f1ab731832d;¿Qué número es negativo?;-10;11;12;a;Porque es menor que 0;4;Invented
+013b32e7-6924-4706-a311-2f1ab731832d;¿Qué número es negativo?;13;-14;15;b;Porque es menor que 0;4;Invented
+013b32e7-6924-4706-a311-2f1ab731832d;¿Qué número es negativo?;16;17;-18;c;Porque es menor que 0;4;Invented
+013b32e7-6924-4706-a311-2f1ab731832d;¿Qué número es negativo?;-19;20;21;a;Porque es menor que 0;4;Invented
+013b32e7-6924-4706-a311-2f1ab731832d;¿Qué número es negativo?;22;-23;24;b;Porque es menor que 0;4;Invented
+013b32e7-6924-4706-a311-2f1ab731832d;¿Qué número es negativo?;25;26;-27;c;Porque es menor que 0;4;Invented
+013b32e7-6924-4706-a311-2f1ab731832d;¿Qué número es negativo?;-28;29;30;a;Porque es menor que 0;4;Invented
+0425f213-64c7-469f-bee6-198f30555a3d;¿Qué número no es entero?;1/2;6;4;a;Porque tiene decimales;4;Invented
+0425f213-64c7-469f-bee6-198f30555a3d;¿Qué número no es entero?;7;2/4;6;b;Porque tiene decimales;4;Invented
+0425f213-64c7-469f-bee6-198f30555a3d;¿Qué número no es entero?;4;3;4/8;c;Porque tiene decimales;4;Invented
+0425f213-64c7-469f-bee6-198f30555a3d;¿Qué número no es entero?;8/16;8;6;a;Porque tiene decimales;4;Invented
+0425f213-64c7-469f-bee6-198f30555a3d;¿Qué número no es entero?;9;3/6;5;b;Porque tiene decimales;4;Invented
+0425f213-64c7-469f-bee6-198f30555a3d;¿Qué número no es entero?;2;3;12/24;c;Porque tiene decimales;4;Invented
+0425f213-64c7-469f-bee6-198f30555a3d;¿Qué número no es entero?;5/10;3;6;a;Porque tiene decimales;4;Invented
+0425f213-64c7-469f-bee6-198f30555a3d;¿Qué número no es entero?;7;7/14;2;b;Porque tiene decimales;4;Invented
+0425f213-64c7-469f-bee6-198f30555a3d;¿Qué número no es entero?;3;2;9/18;c;Porque tiene decimales;4;Invented
+0425f213-64c7-469f-bee6-198f30555a3d;¿Qué número no es entero?;10/20;5;1;a;Porque tiene decimales;4;Invented
