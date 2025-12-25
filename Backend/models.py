@@ -3,8 +3,7 @@ Pydantic models for request/response validation in the authentication API.
 """
 
 from typing import Optional, Dict, Any, List
-
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic import BaseModel, EmailStr, Field
 from datetime import datetime, time as Time
 
 
@@ -148,11 +147,6 @@ class UpdateUserResponse(BaseModel):
     user: UserProfileData
 
 
-class DeleteUserResponse(BaseModel):
-    """Response model for user deletion."""
-    message: str = "User profile deleted successfully"
-
-
 # Question models
 
 class Question(BaseModel):
@@ -238,3 +232,8 @@ class NextSessionResponse(BaseModel):
     """Response model for the next session with full session data."""
     session: Optional[Session] = None
 
+
+class AvailableSessionsResponse(BaseModel):
+    """Response model for available sessions, including sessions and their lessons."""
+    sessions: List[Session]
+    lessons: List[Lesson]

@@ -303,3 +303,20 @@ Returns the next session that the user has to complete, including the full sessi
 **Outputs:**
 
 - Next session full data.
+
+#### **6 GET /history/sessions/available**
+
+**Purpose:**
+Returns an ordered list of sessions that the user can complete, including the full session data. Be aware that sessions belong to lessons, so the lessons must be returned as well. The list is ordered by two criteria: first by the lesson order and then by the session order. The list of sessions that the user can complete is the list of sessions that the user has already passed and the next session that the user has to complete.
+
+**Requirements:**
+
+- User must be logged in.
+
+**Inputs:**
+
+- user_id: The id of the user.
+
+**Outputs:**
+
+- List of jsons of full session data and list of jsons of full lesson data.
