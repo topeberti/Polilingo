@@ -237,3 +237,21 @@ class AvailableSessionsResponse(BaseModel):
     """Response model for available sessions, including sessions and their lessons."""
     sessions: List[Session]
     lessons: List[Lesson]
+
+
+# Learning Models
+
+class LearningQuestion(BaseModel):
+    """Model for a question in a learning session (limited fields for student view)."""
+    id: str
+    question: str
+    a: str
+    b: str
+    c: str
+    explanation: Optional[str] = None
+
+
+class SessionQuestionsResponse(BaseModel):
+    """Response model for questions in a learning session."""
+    questions: List[LearningQuestion]
+

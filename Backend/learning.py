@@ -10,7 +10,7 @@ import logging
 import uuid
 
 from config import get_supabase
-from models import Question
+from models import LearningQuestion, SessionQuestionsResponse
 from middleware import get_current_user, security
 from pool_algorithms import select_random, select_random_not_repeated, select_error_review
 
@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/learning", tags=["Learning"])
 
 
-@router.get("/session/questions")
+@router.get("/session/questions", response_model=SessionQuestionsResponse)
 async def get_session_questions(
     session_id: str = Query(..., description="The id of the session"),
     current_user = Depends(get_current_user),
@@ -192,12 +192,24 @@ async def get_session_questions(
         # Create a mapping of id to question
         questions_map = {q["id"]: q for q in full_questions_response.data}
         
-        # Order questions according to selected_question_ids
-        ordered_questions = [questions_map[qid] for qid in selected_question_ids if qid in questions_map]
+        # Order questions according to selected_question_ids and map to LearningQuestion format
+        ordered_questions = []
+        for qid in selected_question_ids:
+            if qid in questions_map:
+                q = questions_map[qid]
+                learning_q = LearningQuestion(
+                    id=q["id"],
+                    question=q["text"],
+                    a=q["option_a"],
+                    b=q["option_b"],
+                    c=q["option_c"],
+                    explanation=q.get("explanation")
+                )
+                ordered_questions.append(learning_q)
         
         logger.info(f"Returning {len(ordered_questions)} questions")
         
-        return {"questions": ordered_questions}
+        return SessionQuestionsResponse(questions=ordered_questions)
     
     except HTTPException:
         raise
