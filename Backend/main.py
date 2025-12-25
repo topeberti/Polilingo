@@ -13,6 +13,7 @@ from config import settings
 from auth import router as auth_router
 from users import router as users_router
 from history import router as history_router
+from learning import router as learning_router
 
 # Configure logging
 logging.basicConfig(
@@ -47,6 +48,7 @@ app.add_middleware(
 app.include_router(auth_router, prefix=settings.api_prefix)
 app.include_router(users_router, prefix=settings.api_prefix)
 app.include_router(history_router, prefix=settings.api_prefix)
+app.include_router(learning_router, prefix=settings.api_prefix)
 
 
 @app.get("/")
