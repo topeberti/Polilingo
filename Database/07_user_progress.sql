@@ -36,26 +36,41 @@ CREATE TABLE user_session_history (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     session_id UUID NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
-    lesson_id UUID NOT NULL REFERENCES lessons(id) ON DELETE CASCADE,
     
     -- Session details
     started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     completed_at TIMESTAMPTZ,
     
-    -- Question and answer tracking
-    questions_shown UUID[] NOT NULL, -- Array of question IDs
-    user_answers TEXT[] NOT NULL, -- Array of user responses (a, b, or c)
-    correct_answers BOOLEAN[] NOT NULL, -- Array of booleans
-    time_per_question INTEGER[] NOT NULL, -- Array of seconds per question
-    
     -- Performance
-    total_score INTEGER CHECK (total_score >= 0 AND total_score <= 100),
-    xp_earned INTEGER NOT NULL DEFAULT 0,
-    passed BOOLEAN,
-    question_selection_strategy_used TEXT NOT NULL,
+    passed BOOLEAN
+);
+
+-- Detailed record of each question answered within a session or challenge
+CREATE TABLE user_questions_history (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     
-    -- Index for efficient queries
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    -- Link to either session or challenge
+    user_session_history_id UUID REFERENCES user_session_history(id) ON DELETE CASCADE,
+    user_challenges_history_id UUID REFERENCES user_challenges_history(id) ON DELETE CASCADE,
+    
+    question_id UUID NOT NULL REFERENCES questions(id) ON DELETE CASCADE,
+    
+    -- Interaction details
+    started_at TIMESTAMPTZ NOT NULL,
+    answered_at TIMESTAMPTZ,
+    asked_for_explanation BOOLEAN NOT NULL DEFAULT false,
+    answer TEXT CHECK (answer IN ('a', 'b', 'c')),
+    correct BOOLEAN,
+    
+    -- Creation timestamp
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    
+    -- Ensure distinct parent (one or the other, not both)
+    CONSTRAINT check_history_source CHECK (
+        (user_session_history_id IS NOT NULL AND user_challenges_history_id IS NULL) OR
+        (user_session_history_id IS NULL AND user_challenges_history_id IS NOT NULL)
+    )
 );
 
 -- User Gamification Stats Table
@@ -158,10 +173,8 @@ CREATE TRIGGER create_gamification_stats_for_new_user AFTER INSERT ON users
 
 COMMENT ON TABLE user_progress IS 'Tracks individual user advancement through lessons';
 COMMENT ON TABLE user_session_history IS 'Detailed record of each session attempt with questions and answers';
+COMMENT ON TABLE user_questions_history IS 'Detailed record of each question answered within a session';
 COMMENT ON TABLE user_gamification_stats IS 'Gamification metrics including XP, streaks, and league info';
 COMMENT ON TABLE daily_activity_log IS 'Daily user engagement tracking for streaks and analytics';
 
-COMMENT ON COLUMN user_session_history.questions_shown IS 'Array of question UUIDs shown in this session';
-COMMENT ON COLUMN user_session_history.user_answers IS 'Array of user responses corresponding to questions_shown';
-COMMENT ON COLUMN user_session_history.correct_answers IS 'Array of booleans indicating correctness';
-COMMENT ON COLUMN user_session_history.time_per_question IS 'Array of seconds taken per question';
+

@@ -43,7 +43,7 @@ ALTER TABLE league_participants ENABLE ROW LEVEL SECURITY;
 -- Social Tables
 ALTER TABLE friends ENABLE ROW LEVEL SECURITY;
 ALTER TABLE friendly_matches ENABLE ROW LEVEL SECURITY;
-ALTER TABLE challenge_history ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_challenges_history ENABLE ROW LEVEL SECURITY;
 
 -- Other Tables
 ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
@@ -439,6 +439,12 @@ CREATE POLICY "Users can view their own profile"
     TO authenticated
     USING (auth.uid() = id);
 
+-- Users can insert their own profile
+CREATE POLICY "Users can insert their own profile"
+    ON users FOR INSERT
+    TO authenticated
+    WITH CHECK (auth.uid() = id);
+
 -- Users can update their own profile
 CREATE POLICY "Users can update their own profile"
     ON users FOR UPDATE
@@ -484,6 +490,17 @@ CREATE POLICY "Users can insert their own session history"
     TO authenticated
     WITH CHECK (auth.uid() = user_id);
 
+-- User Questions History
+CREATE POLICY "Users can view their own question history"
+    ON user_questions_history FOR SELECT
+    TO authenticated
+    USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert their own question history"
+    ON user_questions_history FOR INSERT
+    TO authenticated
+    WITH CHECK (auth.uid() = user_id);
+
 -- User Gamification Stats
 CREATE POLICY "Users can view their own gamification stats"
     ON user_gamification_stats FOR SELECT
@@ -494,6 +511,11 @@ CREATE POLICY "Users can view other users' gamification stats"
     ON user_gamification_stats FOR SELECT
     TO authenticated
     USING (true);
+
+CREATE POLICY "Users can insert their own gamification stats"
+    ON user_gamification_stats FOR INSERT
+    TO authenticated
+    WITH CHECK (auth.uid() = user_id);
 
 CREATE POLICY "Users can update their own gamification stats"
     ON user_gamification_stats FOR UPDATE
@@ -616,14 +638,19 @@ CREATE POLICY "Users can update their own matches"
     USING (auth.uid() = challenger_id OR auth.uid() = opponent_id)
     WITH CHECK (auth.uid() = challenger_id OR auth.uid() = opponent_id);
 
+-- User Challenges History
+ALTER TABLE user_challenges_history ENABLE ROW LEVEL SECURITY;
+
+-- ...
+
 -- Challenge History
 CREATE POLICY "Users can view their own challenge history"
-    ON challenge_history FOR SELECT
+    ON user_challenges_history FOR SELECT
     TO authenticated
     USING (auth.uid() = user_id);
 
 CREATE POLICY "Users can insert their own challenge history"
-    ON challenge_history FOR INSERT
+    ON user_challenges_history FOR INSERT
     TO authenticated
     WITH CHECK (auth.uid() = user_id);
 

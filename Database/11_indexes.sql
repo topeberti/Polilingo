@@ -44,7 +44,13 @@ CREATE INDEX idx_concepts_heading_order ON concepts(heading_id, "order");
 CREATE INDEX idx_user_session_history_user_id ON user_session_history(user_id);
 CREATE INDEX idx_user_session_history_session_id ON user_session_history(session_id);
 CREATE INDEX idx_user_session_history_user_started ON user_session_history(user_id, started_at DESC);
-CREATE INDEX idx_user_session_history_lesson_id ON user_session_history(lesson_id);
+
+-- User Questions History
+CREATE INDEX idx_user_questions_history_user_id ON user_questions_history(user_id);
+CREATE INDEX idx_user_questions_history_session_history_id ON user_questions_history(user_session_history_id);
+CREATE INDEX idx_user_questions_history_challenges_history_id ON user_questions_history(user_challenges_history_id);
+CREATE INDEX idx_user_questions_history_question_id ON user_questions_history(question_id);
+
 
 -- User Progress: Frequently queried by user and status
 CREATE INDEX idx_user_progress_user_id ON user_progress(user_id);
@@ -93,9 +99,9 @@ CREATE INDEX idx_friendly_matches_status ON friendly_matches(status);
 CREATE INDEX idx_friendly_matches_created ON friendly_matches(created_at DESC);
 
 -- Challenge History: Frequently queried by user and template
-CREATE INDEX idx_challenge_history_user_id ON challenge_history(user_id);
-CREATE INDEX idx_challenge_history_template_id ON challenge_history(challenge_template_id);
-CREATE INDEX idx_challenge_history_user_started ON challenge_history(user_id, started_at DESC);
+CREATE INDEX idx_user_challenges_history_user_id ON user_challenges_history(user_id);
+CREATE INDEX idx_user_challenges_history_template_id ON user_challenges_history(challenge_template_id);
+CREATE INDEX idx_user_challenges_history_user_started ON user_challenges_history(user_id, started_at DESC);
 
 -- ============================================================================
 -- Notifications Indexes

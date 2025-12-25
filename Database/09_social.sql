@@ -53,32 +53,21 @@ CREATE TABLE friendly_matches (
 
 -- Challenge History Table
 -- Records for special algorithmic challenges (lightning rounds, etc.)
-CREATE TABLE challenge_history (
+CREATE TABLE user_challenges_history (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     challenge_template_id UUID NOT NULL REFERENCES challenge_templates(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     
     -- Challenge execution
     started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    completed_at TIMESTAMPTZ,
-    
-    -- Performance
-    questions_answered INTEGER NOT NULL DEFAULT 0,
-    correct_answers INTEGER NOT NULL DEFAULT 0,
-    time_taken INTEGER, -- seconds
-    score INTEGER NOT NULL DEFAULT 0,
-    xp_earned INTEGER NOT NULL DEFAULT 0,
-    new_personal_best BOOLEAN NOT NULL DEFAULT false,
-    
-    -- Timestamps
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    completed_at TIMESTAMPTZ
 );
 
 -- ============================================================================
 -- Trigger to update last_active on challenge completion
 -- ============================================================================
 
-CREATE TRIGGER update_last_active_on_challenge AFTER INSERT ON challenge_history
+CREATE TRIGGER update_last_active_on_challenge AFTER INSERT ON user_challenges_history
     FOR EACH ROW EXECUTE FUNCTION update_user_last_active();
 
 -- ============================================================================
