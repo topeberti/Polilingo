@@ -248,7 +248,6 @@ class LearningQuestion(BaseModel):
     a: str
     b: str
     c: str
-    explanation: Optional[str] = None
 
 
 class SessionQuestionsResponse(BaseModel):

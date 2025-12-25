@@ -202,8 +202,7 @@ async def get_session_questions(
                     question=q["text"],
                     a=q["option_a"],
                     b=q["option_b"],
-                    c=q["option_c"],
-                    explanation=q.get("explanation")
+                    c=q["option_c"]
                 )
                 ordered_questions.append(learning_q)
         
