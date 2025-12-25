@@ -153,86 +153,10 @@ class DeleteUserResponse(BaseModel):
     message: str = "User profile deleted successfully"
 
 
-# Syllabus Models
-
-class Block(BaseModel):
-    """Model for a Syllabus Block."""
-    id: str
-    name: str
-    parent_id: Optional[str] = None
-    description: Optional[str] = None
-    order: int
-    status: str  # e.g., 'active', 'draft', 'archived'
-
-class BlockListResponse(BaseModel):
-    """Response model for a list of blocks."""
-    blocks: List[Block]
-
-
-class BlockQueryResponse(BaseModel):
-    """Response model for block query."""
-    ids: List[str]
-
-
-class Topic(BaseModel):
-    """Model for a Syllabus Topic."""
-    id: str
-    name: str
-    block_id: Optional[str] = None
-    description: Optional[str] = None
-    order: int
-    status: str
-
-class TopicListResponse(BaseModel):
-    """Response model for a list of topics."""
-    topics: List[Topic]
-
-
-class TopicQueryResponse(BaseModel):
-    """Response model for topic query."""
-    ids: List[str]
-
-
-class Heading(BaseModel):
-    """Model for a Syllabus Heading."""
-    id: str
-    name: str
-    topic_id: Optional[str] = None
-    description: Optional[str] = None
-    order: int
-    status: str
-
-class HeadingListResponse(BaseModel):
-    """Response model for a list of headings."""
-    headings: List[Heading]
-
-
-class HeadingQueryResponse(BaseModel):
-    """Response model for heading query."""
-    ids: List[str]
-
-
-class Concept(BaseModel):
-    """Model for a Syllabus Concept."""
-    id: str
-    name: str
-    heading_id: Optional[str] = None
-    description: Optional[str] = None
-    order: int
-    status: str
-
-class ConceptListResponse(BaseModel):
-    """Response model for a list of concepts."""
-    concepts: List[Concept]
-
-
-class ConceptQueryResponse(BaseModel):
-    """Response model for concept query."""
-    ids: List[str]
-
+# Question models
 
 class Question(BaseModel):
-    """Model for a Syllabus Question."""
+    """Model for a question."""
     id: str
     concept_id: str
     text: str
@@ -244,10 +168,6 @@ class Question(BaseModel):
     difficulty: int
     source: Optional[str] = None
 
-class QuestionListResponse(BaseModel):
-    """Response model for a list of questions."""
-    questions: List[Question]
-
 
 # Learning Path Models
 
@@ -258,15 +178,6 @@ class Lesson(BaseModel):
     order: int
     xp_reward: int
     status: str
-
-class LessonListResponse(BaseModel):
-    """Response model for a list of lessons."""
-    lessons: List[Lesson]
-
-
-class LessonQueryResponse(BaseModel):
-    """Response model for lesson query."""
-    ids: List[str]
 
 
 class Session(BaseModel):
@@ -284,26 +195,11 @@ class Session(BaseModel):
     min_difficulty: Optional[int] = None
     max_difficulty: Optional[int] = None
 
-class SessionListResponse(BaseModel):
-    """Response model for a list of sessions."""
-    sessions: List[Session]
-
-
-class SessionQueryResponse(BaseModel):
-    """Response model for session query."""
-    ids: List[str]
-
-
-class QuestionQueryResponse(BaseModel):
-    """Response model for question query."""
-    ids: List[str]
-
 
 # History Models
 
-class AnsweredQuestionStats(BaseModel):
-    """Model for a single answered question statistics."""
-    question_id: str
+class AnsweredQuestionStats(Question):
+    """Model for a single answered question statistics with full question data."""
     total_attempts: int
     correct_answers: int
 
@@ -313,9 +209,9 @@ class AnsweredQuestionsHistoryResponse(BaseModel):
     answered_questions: List[AnsweredQuestionStats]
 
 
-class PassedSession(BaseModel):
-    """Model for a single passed session."""
-    session_id: str
+class PassedSession(Session):
+    """Model for a single passed session with full session data."""
+    pass
 
 
 class PassedSessionsResponse(BaseModel):
@@ -323,9 +219,9 @@ class PassedSessionsResponse(BaseModel):
     sessions: List[PassedSession]
 
 
-class PassedLesson(BaseModel):
-    """Model for a single passed lesson."""
-    lesson_id: str
+class PassedLesson(Lesson):
+    """Model for a single passed lesson with full lesson data."""
+    pass
 
 
 class PassedLessonsResponse(BaseModel):
@@ -334,11 +230,11 @@ class PassedLessonsResponse(BaseModel):
 
 
 class NextLessonResponse(BaseModel):
-    """Response model for the next lesson ID."""
-    lesson_id: Optional[str] = None
+    """Response model for the next lesson with full lesson data."""
+    lesson: Optional[Lesson] = None
 
 
 class NextSessionResponse(BaseModel):
-    """Response model for the next session ID."""
-    session_id: Optional[str] = None
+    """Response model for the next session with full session data."""
+    session: Optional[Session] = None
 

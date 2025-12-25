@@ -217,371 +217,12 @@ Delete the authenticated user's profile.
 
 - User must be logged in.
 
-### Syllabus fetching
-
-#### **1 GET /syllabus/blocks/fetch**
-
-**Purpose:**
-Fetch any number of blocks from the database by their ids.
-
-**Requirements:**
-
-- User must be logged in.
-- Block must exist in the database.
-
-**Inputs**
-
-- Block ids list separated by commas
-
-**Outputs**
-
-- Block objects list
-
-#### **2 GET /syllabus/topics/fetch**
-
-**Purpose:**
-Fetch any number of topics from the database by their ids.
-
-**Requirements:**
-
-- User must be logged in.
-- Topic must exist in the database.
-
-**Inputs**
-
-- Topic ids list separated by commas
-
-**Outputs**
-
-- Topic objects list
-
-#### **3 GET /syllabus/headings/fetch**
-
-**Purpose:**
-Fetch any number of headings from the database by their ids.
-
-**Requirements:**
-
-- User must be logged in.
-- Heading must exist in the database.
-
-**Inputs**
-
-- Heading ids list separated by commas
-
-**Outputs**
-
-- Heading objects list
-
-#### **4 GET /syllabus/concepts/fetch**
-
-**Purpose:**
-Fetch any number of concepts from the database by their ids.
-
-**Requirements:**
-
-- User must be logged in.
-- Concept must exist in the database.
-
-**Inputs**
-
-- Concept ids list separated by commas
-
-**Outputs**
-
-- Concept objects list
-
-#### **5 GET /syllabus/questions/fetch**
-
-**Purpose:**
-Fetch any number of questions from the database by their ids.
-
-**Requirements:**
-
-- User must be logged in.
-- Question must exist in the database.
-
-**Inputs**
-
-- Question ids list separated by commas
-
-**Outputs**
-
-- Question objects list
-
-#### **6  GET /syllabus/blocks/query**
-
-**Purpose:**
-Returns a list of blocks ids that match the given query.
-
-The columns used to filter the query will be:
-
-name: The query can ask for the blocks that contain or that have exactly the same name.
-description: The query can ask for the blocks that contain or that have exactly the same description.
-order: The query can ask for the blocks that have exactly the same order, blocks that have an order greater than the one asked for or blocks that have an order less than the one asked for.
-status: The query always asks for active blocks, the request does not let the user ask for inactive blocks.
-
-**Requirements:**
-
-- User must be logged in.
-
-**Inputs**
-
-- name_text: The text to search for in the name.
-- name_exact: Boolean that indicates if the name must be exactly the same as the one asked for.
-- description_text: The text to search for in the description.
-- description_exact: Boolean that indicates if the description must be exactly the same as the one asked for.
-- order_number: The order to search for.
-- order_greater: Boolean that indicates if the order must be greater than the one asked for.
-- order_less: Boolean that indicates if the order must be less than the one asked for.
-
-**Outputs**
-
-- Block ids list
-
-#### **7 GET /syllabus/topics/query**
-
-**Purpose:**
-Returns a list of topics ids that match the given query.
-
-The columns used to filter the query will be:
-
-block_ids: The query can ask for the topics that have exactly the same block_ids from a list of block ids separated by commas.
-name: The query can ask for the topics that contain or that have exactly the same name.
-description: The query can ask for the topics that contain or that have exactly the same description.
-order: The query can ask for the topics that have exactly the same order, topics that have an order greater than the one asked for or topics that have an order less than the one asked for.
-status: The query always asks for active topics, the request does not let the user ask for inactive topics.
-
-**Requirements:**
-
-- User must be logged in.
-
-**Inputs**
-
-- block_ids: The list of block ids separated by commas.
-- name_text: The text to search for in the name.
-- name_exact: Boolean that indicates if the name must be exactly the same as the one asked for.
-- description_text: The text to search for in the description.
-- description_exact: Boolean that indicates if the description must be exactly the same as the one asked for.
-- order_number: The order to search for.
-- order_greater: Boolean that indicates if the order must be greater than the one asked for.
-- order_less: Boolean that indicates if the order must be less than the one asked for.
-
-**Outputs**
-
-- Topic ids list
-
-#### **8 GET /syllabus/headings/query**
-
-**Purpose:**
-Returns a list of headings ids that match the given query.
-
-The columns used to filter the query will be:
-
-topic_ids: The query can ask for the headings that have exactly the same topic_ids from a list of topic ids separated by commas.
-name: The query can ask for the headings that contain or that have exactly the same name.
-description: The query can ask for the headings that contain or that have exactly the same description.
-order: The query can ask for the headings that have exactly the same order, headings that have an order greater than the one asked for or headings that have an order less than the one asked for.
-status: The query always asks for active headings, the request does not let the user ask for inactive headings.
-
-**Requirements:**
-
-- User must be logged in.
-
-**Inputs**
-
-- topic_ids: The list of topic ids separated by commas.
-- name_text: The text to search for in the name.
-- name_exact: Boolean that indicates if the name must be exactly the same as the one asked for.
-- description_text: The text to search for in the description.
-- description_exact: Boolean that indicates if the description must be exactly the same as the one asked for.
-- order_number: The order to search for.
-- order_greater: Boolean that indicates if the order must be greater than the one asked for.
-- order_less: Boolean that indicates if the order must be less than the one asked for.
-
-**Outputs**
-
-- Heading ids list
-
-#### **9 GET /syllabus/concepts/query**
-
-**Purpose:**
-Returns a list of concepts ids that match the given query.
-
-The columns used to filter the query will be:
-
-heading_ids: The query can ask for the concepts that have exactly the same heading_ids from a list of heading ids separated by commas.
-name: The query can ask for the concepts that contain or that have exactly the same name.
-description: The query can ask for the concepts that contain or that have exactly the same description.
-order: The query can ask for the concepts that have exactly the same order, concepts that have an order greater than the one asked for or concepts that have an order less than the one asked for.
-status: The query always asks for active concepts, the request does not let the user ask for inactive concepts.
-
-**Requirements:**
-
-- User must be logged in.
-
-**Inputs**
-
-- heading_ids: The list of heading ids separated by commas.
-- name_text: The text to search for in the name.
-- name_exact: Boolean that indicates if the name must be exactly the same as the one asked for.
-- description_text: The text to search for in the description.
-- description_exact: Boolean that indicates if the description must be exactly the same as the one asked for.
-- order_number: The order to search for.
-- order_greater: Boolean that indicates if the order must be greater than the one asked for.
-- order_less: Boolean that indicates if the order must be less than the one asked for.
-
-**Outputs**
-
-- Concept ids list
-
-#### **10 GET /syllabus/questions/query**
-
-**Purpose:**
-Returns a list of questions ids that match the given query.
-
-The columns used to filter the query will be:
-
-concept_ids: The query can ask for the questions that have exactly the same concept_ids from a list of concept ids separated by commas.
-difficulty: The query can ask for the questions that have exactly the same difficulty.
-difficulty_greater: The query can ask for the questions that have a difficulty greater than the one asked for.
-difficulty_less: The query can ask for the questions that have a difficulty less than the one asked for.
-status: The query always asks for active questions, the request does not let the user ask for inactive questions.
-
-**Requirements:**
-
-- User must be logged in.
-
-**Inputs**
-
-- concept_ids: The list of concept ids separated by commas.
-- difficulty_number: The difficulty to search for.
-- difficulty_greater: Boolean that indicates if the difficulty must be greater than the one asked for.
-- difficulty_less: Boolean that indicates if the difficulty must be less than the one asked for.
-
-**Outputs**
-
-- Question ids list
-
-### Learning Path fetching
-
-#### **1 GET /learning-path/lessons/fetch**
-
-**Purpose:**
-Returns a list of lessons given a list of lesson ids.
-
-**Requirements:**
-
-- User must be logged in.
-
-**Inputs**
-
-- lesson_ids: The list of lesson ids separated by commas.
-
-**Outputs**
-
-- Lessons list
-
-#### **2 GET /learning-path/sessions/fetch**
-
-**Purpose:**
-Returns a list of sessions given a list of session ids.
-
-**Requirements:**
-
-- User must be logged in.
-
-**Inputs**
-
-- session_ids: The list of session ids separated by commas.
-
-**Outputs**
-
-- Sessions list
-
-#### **3 GET /learning-path/lessons/query**
-
-**Purpose:**
-Returns a list of lessons ids that match the given query.
-
-The columns used to filter the query will be:
-
-name: The query can ask for the lessons that contain or that have exactly the same name.
-order: The query can ask for the lessons that have exactly the same order, lessons that have an order greater than the one asked for or lessons that have an order less than the one asked for.
-xp_reward: The query can ask for the lessons that have exactly the same xp_reward, lessons that have an xp_reward greater than the one asked for or lessons that have an xp_reward less than the one asked for.
-status: The query always asks for active lessons, the request does not let the user ask for inactive lessons.
-
-**Requirements:**
-
-- User must be logged in.
-
-**Inputs**
-
-- name_text: The text to search for in the name.
-- name_exact: Boolean that indicates if the name must be exactly the same as the one asked for.
-- order_number: The order to search for.
-- order_greater: Boolean that indicates if the order must be greater than the one asked for.
-- order_less: Boolean that indicates if the order must be less than the one asked for.
-- xp_reward_number: The xp_reward to search for.
-- xp_reward_greater: Boolean that indicates if the xp_reward must be greater than the one asked for.
-- xp_reward_less: Boolean that indicates if the xp_reward must be less than the one asked for.
-
-**Outputs**
-
-- Lesson ids list
-
-#### **4 GET /learning-path/sessions/query**
-
-**Purpose:**
-Returns a list of sessions ids that match the given query.
-
-The columns used to filter the query will be:
-
-lesson_ids: The query can ask for the sessions that have exactly the same lesson_ids from a list of lesson ids separated by commas.
-name: The query can ask for the sessions that contain or that have exactly the same name.
-order: The query can ask for the sessions that have exactly the same order, sessions that have an order greater than the one asked for or sessions that have an order less than the one asked for.
-number of questions: The query can ask for the sessions that have exactly the same number of questions, sessions that have a number of questions greater than the one asked for or sessions that have a number of questions less than the one asked for.
-question selection strategy: The query can ask for the sessions that have exactly the same question selection strategy.
-concept_ids: The query can ask for the sessions that have exactly the same concept_ids from a list of concept ids separated by commas.
-heading_ids: The query can ask for the sessions that have exactly the same heading_ids from a list of heading ids separated by commas.
-topic_ids: The query can ask for the sessions that have exactly the same topic_ids from a list of topic ids separated by commas.
-block_ids: The query can ask for the sessions that have exactly the same block_ids from a list of block ids separated by commas.
-minimum difficulty: The query can ask for the sessions that have a minimum difficulty.
-maximum difficulty: The query can ask for the sessions that have a maximum difficulty.
-
-**Requirements:**
-
-- User must be logged in.
-
-**Inputs**
-
-- lesson_ids: The list of lesson ids separated by commas.
-- name_text: The text to search for in the name.
-- name_exact: Boolean that indicates if the name must be exactly the same as the one asked for.
-- order_number: The order to search for.
-- order_greater: Boolean that indicates if the order must be greater than the one asked for.
-- order_less: Boolean that indicates if the order must be less than the one asked for.
-- number_of_questions_number: The number of questions to search for.
-- number_of_questions_greater: Boolean that indicates if the number of questions must be greater than the one asked for.
-- number_of_questions_less: Boolean that indicates if the number of questions must be less than the one asked for.
-- question_selection_strategy: The question selection strategy to search for.
-- concept_ids: The list of concept ids separated by commas.
-- heading_ids: The list of heading ids separated by commas.
-- topic_ids: The list of topic ids separated by commas.
-- block_ids: The list of block ids separated by commas.
-- minimum_difficulty_number: The minimum difficulty to search for.
-- maximum_difficulty_number: The maximum difficulty to search for.
-
-**Outputs**
-
-- Session ids list
-
 ### History
 
 #### **1 GET /history/questions/answered**
 
 **Purpose:**
-Returns a list of questions ids that the user has answered, the number of times the user has answered the question and the number of times the user has answered the question correctly. Therefore queries the user_questions_history table where the user_id is the user that is logged in, then counts the number of rows for each question id and the number of rows where the correct column is true for each question id.
+Returns a list of questions that the user has answered, including the full question data, the number of times the user has answered the question and the number of times the user has answered the question correctly.
 
 **Requirements:**
 
@@ -593,12 +234,12 @@ Returns a list of questions ids that the user has answered, the number of times 
 
 **Outputs:**
 
-- List of jsons of question ids, the number of times the user has answered the question and the number of times the user has answered the question correctly.
+- List of jsons of full question data, the number of times the user has answered the question and the number of times the user has answered the question correctly.
 
 #### **2 GET /history/sessions/passed**
 
 **Purpose:**
-Returns a list of sessions ids that the user has completed. Therefore queries the user_session_history table where the user_id is the user that is logged in and filters the rows where the passed column is true.
+Returns a list of sessions that the user has completed, including the full session data.
 
 **Requirements:**
 
@@ -610,12 +251,12 @@ Returns a list of sessions ids that the user has completed. Therefore queries th
 
 **Outputs:**
 
-- List of jsons of session ids.
+- List of jsons of full session data.
 
 #### **3 GET /history/lessons/passed**
 
 **Purpose:**
-Returns a list of lessons ids that the user has completed. Therefore queries the user_lessons_history table where the user_id is the user that is logged in and filters the rows where the passed column is true.
+Returns a list of lessons that the user has completed, including the full lesson data.
 
 **Requirements:**
 
@@ -627,12 +268,12 @@ Returns a list of lessons ids that the user has completed. Therefore queries the
 
 **Outputs:**
 
-- List of jsons of lesson ids.
+- List of jsons of full lesson data.
 
 #### **4 GET /history/lessons/next**
 
 **Purpose:**
-Returns the next lesson id that the user has to complete. Therefore queries the user_lessons_history table where the user_id is the user that is logged in and filters the rows where the passed column is True. Then queries the lessons table where the id is the lesson_id of the row where the passed column is True. And finally queries the lessons table where the order is greater than the order of the lesson_id of the row where the passed column is True and returns the lesson id that has the lowest order number to effectively return the next lesson id. If the user has not completed any lesson, returns the lesson id that has the lowest order number.
+Returns the next lesson that the user has to complete, including the full lesson data.
 
 **Requirements:**
 
@@ -644,12 +285,12 @@ Returns the next lesson id that the user has to complete. Therefore queries the 
 
 **Outputs:**
 
-- Next lesson id
+- Next lesson full data.
 
 #### **5 GET /history/sessions/next**
 
 **Purpose:**
-Returns the next session id that the user has to complete. Therefore queries the user_sessions_history table where the user_id is the user that is logged in and filters the rows where the passed column is True. Then queries the sessions table where the id is the session_id of the row where the passed column is True. And finally queries the sessions table where the order is greater than the order of the session_id of the row where the passed column is True and returns the session id that has the lowest order number to effectively return the next session id. If the user has not completed any session, returns the session id that has the lowest order number.
+Returns the next session that the user has to complete, including the full session data.
 
 **Requirements:**
 
@@ -661,4 +302,4 @@ Returns the next session id that the user has to complete. Therefore queries the
 
 **Outputs:**
 
-- Next session id
+- Next session full data.
