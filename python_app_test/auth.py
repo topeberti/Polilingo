@@ -1,5 +1,9 @@
 import requests
 import getpass
+import os
+import json
+
+SESSION_FILE = ".session.json"
 
 def login():
     """
@@ -24,6 +28,7 @@ def login():
         access_token = data.get("session", {}).get("access_token")
         if access_token:
             print("Login successful!")
+            save_session(access_token)
             return access_token
         else:
             print("Login failed: No access token received.")
@@ -76,6 +81,49 @@ def signup():
             except ValueError:
                 print(f"Status Code: {e.response.status_code}")
         return False
+
+def save_session(token):
+    """Saves the bearer token to a local file."""
+    try:
+        with open(SESSION_FILE, "w") as f:
+            json.dump({"access_token": token}, f)
+    except Exception as e:
+        print(f"Error saving session: {e}")
+
+def load_session():
+    """Loads the bearer token from a local file if it exists."""
+    if os.path.exists(SESSION_FILE):
+        try:
+            with open(SESSION_FILE, "r") as f:
+                data = json.load(f)
+                return data.get("access_token")
+        except Exception as e:
+            print(f"Error loading session: {e}")
+    return None
+
+def logout():
+    """Clears the local session and optionally notifies the backend."""
+    if os.path.exists(SESSION_FILE):
+        try:
+            # Load token for backend logout if needed
+            token = load_session()
+            if token:
+                url = "http://localhost:8000/auth/logout"
+                headers = {"Authorization": f"Bearer {token}"}
+                try:
+                    requests.post(url, headers=headers, timeout=5)
+                except:
+                    # Silent fail if server is down or logout fails
+                    pass
+            
+            os.remove(SESSION_FILE)
+            print("Logged out successfully.")
+            return True
+        except Exception as e:
+            print(f"Error during logout: {e}")
+    else:
+        print("No active session found.")
+    return False
 
 if __name__ == "__main__":
     choice = input("Would you like to (L)ogin or (S)ignup? ").lower()
