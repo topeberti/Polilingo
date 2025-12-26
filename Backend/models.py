@@ -270,3 +270,18 @@ class FinishSessionRequest(BaseModel):
     history_id: str = Field(..., description="The id of the user session history row")
     passed: bool = Field(..., description="Whether the session was passed or not")
 
+
+class AnswerQuestionRequest(BaseModel):
+    """Request model for answering a question."""
+    question_id: str = Field(..., description="The id of the question")
+    answer: str = Field(..., description="The answer (a, b, or c)")
+    user_session_history_id: str = Field(..., description="The id of the user session history row")
+    started_at: datetime = Field(..., description="The time when the question started")
+    asked_for_explanation: bool = Field(..., description="Whether the user asked for an explanation")
+
+
+class AnswerQuestionResponse(BaseModel):
+    """Response model for answering a question."""
+    correct: bool = Field(..., description="Whether the answer is correct or not")
+    explanation: Optional[str] = Field(None, description="The explanation for the question")
+

@@ -1,5 +1,6 @@
 import requests
 import json
+from datetime import datetime
 
 def get_available_sessions(token):
     """
@@ -53,7 +54,7 @@ def get_passed_sessions(token):
     except requests.exceptions.RequestException:
         return []
 
-def show_session_details(session):
+def show_session_details(session, token):
     """
     Displays detailed information about a session.
     """
@@ -71,7 +72,113 @@ def show_session_details(session):
         print(f"Maximum Difficulty: {session['max_difficulty']}")
     
     print("=" * 60)
-    input("\nPress Enter to continue...")
+    
+    choice = input("\nDo you want to start this session? (y/n): ").strip().lower()
+    if choice == 'y':
+        start_interactive_session(token, session)
+    else:
+        print("Session not started.")
+        input("\nPress Enter to continue...")
+
+def start_interactive_session(token, session):
+    """
+    Handles the interactive session flow.
+    """
+    session_id = session['id']
+    headers = {"Authorization": f"Bearer {token}"}
+    
+    print(f"\nStarting session: {session['name']}...")
+    
+    # 1. Fetch questions
+    try:
+        url_q = f"http://localhost:8000/learning/session/questions?session_id={session_id}"
+        resp_q = requests.get(url_q, headers=headers)
+        resp_q.raise_for_status()
+        questions = resp_q.json().get("questions", [])
+    except Exception as e:
+        print(f"Error fetching questions: {e}")
+        input("\nPress Enter to return...")
+        return
+
+    if not questions:
+        print("No questions found for this session.")
+        input("\nPress Enter to return...")
+        return
+
+    # 2. Start session
+    try:
+        url_start = "http://localhost:8000/learning/session/start"
+        resp_start = requests.post(url_start, headers=headers, json={"session_id": session_id})
+        resp_start.raise_for_status()
+        history_id = resp_start.json().get("id")
+    except Exception as e:
+        print(f"Error starting session: {e}")
+        input("\nPress Enter to return...")
+        return
+
+    print(f"Session started! (History ID: {history_id})")
+    
+    # 3. Answer questions loop
+    to_answer = questions.copy()
+    incorrect_questions = []
+    
+    while to_answer:
+        current_batch = to_answer
+        to_answer = [] # Reset for next round if needed
+        
+        for q in current_batch:
+            print("\n" + "-" * 40)
+            print(f"Question: {q['question']}")
+            print(f"a) {q['a']}")
+            print(f"b) {q['b']}")
+            print(f"c) {q['c']}")
+            
+            started_at = datetime.utcnow().isoformat() + "Z"
+            
+            while True:
+                ans = input("\nYour answer (a, b, c): ").strip().lower()
+                if ans in ['a', 'b', 'c']:
+                    break
+                print("Invalid option. Please choose a, b, or c.")
+            
+            # Submit answer
+            try:
+                url_ans = "http://localhost:8000/learning/question/answer"
+                payload = {
+                    "question_id": q['id'],
+                    "answer": ans,
+                    "user_session_history_id": history_id,
+                    "started_at": started_at,
+                    "asked_for_explanation": False
+                }
+                resp_ans = requests.post(url_ans, headers=headers, json=payload)
+                resp_ans.raise_for_status()
+                is_correct = resp_ans.json().get("correct")
+                
+                if is_correct:
+                    print("✅ Correct!")
+                else:
+                    print("❌ Incorrect.")
+                    to_answer.append(q)
+            except Exception as e:
+                print(f"Error submitting answer: {e}")
+                # We add it to repeat if something fails during submission
+                to_answer.append(q)
+
+        if to_answer:
+            print(f"\nYou have {len(to_answer)} questions remaining (was incorrect or failed). Repeating them now...")
+        else:
+            print("\nAll questions answered correctly!")
+
+    # 4. Finish session
+    try:
+        url_finish = "http://localhost:8000/learning/session/finish"
+        requests.post(url_finish, headers=headers, json={"history_id": history_id, "passed": True})
+        print("\nSession finished successfully!")
+    except Exception as e:
+        print(f"Error finishing session: {e}")
+
+    input("\nPress Enter to return to menu...")
 
 def show_learning_path(token):
     """
@@ -137,7 +244,7 @@ def show_learning_path(token):
         try:
             session_num = int(choice)
             if session_num in session_map:
-                show_session_details(session_map[session_num])
+                show_session_details(session_map[session_num], token)
             else:
                 print(f"\nInvalid session number. Please enter a number between 1 and {len(sessions)}.")
                 input("\nPress Enter to continue...")

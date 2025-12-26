@@ -347,7 +347,7 @@ To do this, the question_selection_strategy field in the session table is used t
 
 **Outputs:**
 
-- List of jsons of full question data.
+- List of JSON objects of questions (id, question, a, b, c).
 
 #### **2 POST /learning/session/start**
 
@@ -410,4 +410,5 @@ Steps:
 
 **Outputs:**
 
-- Boolean value indicating if the answer is correct or not.
+- `correct`: Boolean value indicating if the answer is correct or not.
+- `explanation`: The explanation text from the question table.

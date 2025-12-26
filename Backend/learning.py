@@ -10,7 +10,7 @@ import logging
 import uuid
 
 from config import get_supabase
-from models import LearningQuestion, SessionQuestionsResponse, StartSessionRequest, FinishSessionRequest, StartSessionResponse
+from models import LearningQuestion, SessionQuestionsResponse, StartSessionRequest, FinishSessionRequest, StartSessionResponse, AnswerQuestionRequest, AnswerQuestionResponse
 from middleware import get_current_user, security
 from pool_algorithms import select_random, select_random_not_repeated, select_error_review
 
@@ -369,4 +369,94 @@ async def finish_session(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to finish session: {str(e)}"
+        )
+
+
+@router.post("/question/answer", response_model=AnswerQuestionResponse)
+async def answer_question(
+    request: AnswerQuestionRequest,
+    current_user = Depends(get_current_user),
+    supabase: Client = Depends(get_supabase),
+    credentials: HTTPAuthorizationCredentials = Security(security)
+):
+    """
+    Answer a question given the question id and the answer (a, b or c).
+    
+    Steps:
+    1. Fetch the question using the question id to get the correct option.
+    2. Check if the answer is correct.
+    3. Update the user_questions_history table.
+    4. Return if the answer is correct.
+    """
+    try:
+        # Validate UUIDs
+        try:
+            uuid.UUID(request.question_id)
+            uuid.UUID(request.user_session_history_id)
+        except ValueError:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid UUID format for question_id or user_session_history_id"
+            )
+            
+        if request.answer not in ['a', 'b', 'c']:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Answer must be 'a', 'b', or 'c'"
+            )
+            
+        token = credentials.credentials
+        user_id = current_user.id
+        
+        logger.info(f"User {user_id} answering question {request.question_id} in history {request.user_session_history_id}")
+        
+        # Step 1: Fetch the question
+        question_response = supabase.postgrest.auth(token).from_("questions").select("correct_option, explanation").eq("id", request.question_id).execute()
+        
+        if not question_response.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Question not found"
+            )
+            
+        question_data = question_response.data[0]
+        correct_option = question_data["correct_option"]
+        explanation = question_data.get("explanation")
+        
+        # Step 2: Check if correct
+        is_correct = (request.answer == correct_option)
+        
+        # Step 3: Record in history
+        from datetime import datetime
+        
+        history_data = {
+            "user_id": user_id,
+            "user_session_history_id": request.user_session_history_id,
+            "question_id": request.question_id,
+            "started_at": request.started_at.isoformat(),
+            "answered_at": datetime.utcnow().isoformat(),
+            "asked_for_explanation": request.asked_for_explanation,
+            "answer": request.answer,
+            "correct": is_correct
+        }
+        
+        logger.info(f"Recording question history: {history_data}")
+        
+        insert_response = supabase.postgrest.auth(token).from_("user_questions_history").insert(history_data).execute()
+        
+        if not insert_response.data:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to record question answer in history"
+            )
+            
+        return AnswerQuestionResponse(correct=is_correct, explanation=explanation)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error answering question: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to answer question: {str(e)}"
         )
