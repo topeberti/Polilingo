@@ -30,6 +30,13 @@ CREATE POLICY "Users can insert their own lesson history"
     TO authenticated
     WITH CHECK (auth.uid() = user_id);
 
+-- Users can update their own lesson history
+CREATE POLICY "Users can update their own lesson history"
+    ON user_lessons_history FOR UPDATE
+    TO authenticated
+    USING (auth.uid() = user_id)
+    WITH CHECK (auth.uid() = user_id);
+
 -- Content admins and super admins have full access
 CREATE POLICY "Admins can manage user lessons history"
     ON user_lessons_history FOR ALL

@@ -611,8 +611,8 @@ access:
 
 - Row Level Security (RLS) must be enabled on all user-related tables
 
-- Users can only read/write their own data (User Progress, User Session
-  History, User Gamification Stats, etc.)
+- Users can read/write their own data (User Progress, User Session
+  History, User Gamification Stats, etc.) including updates
 
 - Learning path content (Questions, Lessons, Sessions, etc.) should be
   read-only for users

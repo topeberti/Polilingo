@@ -490,6 +490,12 @@ CREATE POLICY "Users can insert their own session history"
     TO authenticated
     WITH CHECK (auth.uid() = user_id);
 
+CREATE POLICY "Users can update their own session history"
+    ON user_session_history FOR UPDATE
+    TO authenticated
+    USING (auth.uid() = user_id)
+    WITH CHECK (auth.uid() = user_id);
+
 -- User Questions History
 CREATE POLICY "Users can view their own question history"
     ON user_questions_history FOR SELECT
@@ -499,6 +505,12 @@ CREATE POLICY "Users can view their own question history"
 CREATE POLICY "Users can insert their own question history"
     ON user_questions_history FOR INSERT
     TO authenticated
+    WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own question history"
+    ON user_questions_history FOR UPDATE
+    TO authenticated
+    USING (auth.uid() = user_id)
     WITH CHECK (auth.uid() = user_id);
 
 -- User Gamification Stats
@@ -652,6 +664,12 @@ CREATE POLICY "Users can view their own challenge history"
 CREATE POLICY "Users can insert their own challenge history"
     ON user_challenges_history FOR INSERT
     TO authenticated
+    WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own challenge history"
+    ON user_challenges_history FOR UPDATE
+    TO authenticated
+    USING (auth.uid() = user_id)
     WITH CHECK (auth.uid() = user_id);
 
 -- ============================================================================

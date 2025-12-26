@@ -10,7 +10,7 @@ import logging
 import uuid
 
 from config import get_supabase
-from models import LearningQuestion, SessionQuestionsResponse
+from models import LearningQuestion, SessionQuestionsResponse, StartSessionRequest, FinishSessionRequest, StartSessionResponse
 from middleware import get_current_user, security
 from pool_algorithms import select_random, select_random_not_repeated, select_error_review
 
@@ -217,4 +217,156 @@ async def get_session_questions(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to fetch session questions: {str(e)}"
+        )
+
+
+@router.post("/session/start", response_model=StartSessionResponse, status_code=status.HTTP_201_CREATED)
+async def start_session(
+    request: StartSessionRequest,
+    current_user = Depends(get_current_user),
+    supabase: Client = Depends(get_supabase),
+    credentials: HTTPAuthorizationCredentials = Security(security)
+):
+    """
+    Start a session by creating a new row in user_session_history table setting the session_id, user_id and started_at fields.
+    Returns the id of the created row.
+    """
+    try:
+        # Validate session_id is a UUID
+        try:
+            uuid.UUID(request.session_id)
+        except ValueError:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid session_id format"
+            )
+            
+        token = credentials.credentials
+        user_id = current_user.id
+        
+        logger.info(f"Starting session {request.session_id} for user {user_id}")
+        
+        # Verify session exists
+        session_response = supabase.postgrest.auth(token).from_("sessions").select("id").eq("id", request.session_id).execute()
+        if not session_response.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Session not found"
+            )
+            
+        # Create new entry in user_session_history
+        from datetime import datetime
+        
+        data = {
+            "user_id": user_id,
+            "session_id": request.session_id,
+            "started_at": datetime.utcnow().isoformat()
+        }
+        
+        
+        
+        
+        insert_response = supabase.postgrest.auth(token).from_("user_session_history").insert(data).execute()
+        
+        if not insert_response.data:
+             raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to create session history record"
+            )
+            
+        new_id = insert_response.data[0]["id"]
+        
+        logger.info(f"Session {request.session_id} started successfully with history id {new_id}")
+        
+        return StartSessionResponse(id=new_id)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error starting session: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to start session: {str(e)}"
+        )
+
+
+@router.post("/session/finish", status_code=status.HTTP_204_NO_CONTENT)
+async def finish_session(
+    request: FinishSessionRequest,
+    current_user = Depends(get_current_user),
+    supabase: Client = Depends(get_supabase),
+    credentials: HTTPAuthorizationCredentials = Security(security)
+):
+    """
+    Finish a session by updating the user_sessions_history table setting the finished_at field and the passed field.
+    """
+    try:
+        # Validate session_id is a UUID
+        try:
+            uuid.UUID(request.history_id)
+        except ValueError:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid history_id format"
+            )
+            
+        token = credentials.credentials
+        user_id = current_user.id
+        
+        logger.info(f"Finishing session history {request.history_id} for user {user_id}")
+        
+        # Verify the session history exists and belongs to the user
+        response = supabase.postgrest.auth(token).from_("user_session_history")\
+            .select("id")\
+            .eq("user_id", user_id)\
+            .eq("id", request.history_id)\
+            .execute()
+            
+        if not response.data:
+            logger.warning(f"Session history {request.history_id} not found for user {user_id}")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Session history not found"
+            )
+        
+        from datetime import datetime
+        
+        update_data = {
+            "completed_at": datetime.utcnow().isoformat(),
+            "passed": request.passed
+        }
+        
+        # Add user_id to ensure RLS compliance and extra safety
+        logger.info(f"Updating history_id={request.history_id} for user_id={user_id} with data={update_data}")
+        
+        update_response = supabase.postgrest.auth(token).from_("user_session_history").update(update_data).eq("id", request.history_id).eq("user_id", user_id).execute()
+        
+        logger.info(f"Update executed. Verifying update...")
+        
+        # Verify if the update actually happened by reading it back
+        verification = supabase.postgrest.auth(token).from_("user_session_history").select("completed_at, passed").eq("id", request.history_id).execute()
+        
+        if not verification.data:
+            logger.error(f"Verification failed: Row {request.history_id} not found after update")
+            raise HTTPException(status_code=500, detail="Row disappeared after update")
+            
+        row = verification.data[0]
+        if row.get("completed_at") is None or row.get("passed") != request.passed:
+             logger.error(f"Verification failed: Data mismatch. DB: {row}, Expected passed={request.passed}")
+             raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Update operation returned success but data was not updated. Check RLS policies for UPDATE."
+            )
+
+        logger.info(f"Session history {request.history_id} finished successfully (passed={request.passed})")
+        
+        return
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error finishing session: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to finish session: {str(e)}"
         )

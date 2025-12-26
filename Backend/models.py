@@ -254,3 +254,19 @@ class SessionQuestionsResponse(BaseModel):
     """Response model for questions in a learning session."""
     questions: List[LearningQuestion]
 
+
+class StartSessionRequest(BaseModel):
+    """Request model for starting a session."""
+    session_id: str = Field(..., description="The id of the session")
+
+
+class StartSessionResponse(BaseModel):
+    """Response model for starting a session."""
+    id: str = Field(..., description="The id of the created user session history row")
+
+
+class FinishSessionRequest(BaseModel):
+    """Request model for finishing a session."""
+    history_id: str = Field(..., description="The id of the user session history row")
+    passed: bool = Field(..., description="Whether the session was passed or not")
+

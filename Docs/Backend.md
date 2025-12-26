@@ -320,3 +320,94 @@ Returns an ordered list of sessions that the user can complete, including the fu
 **Outputs:**
 
 - List of jsons of full session data and list of jsons of full lesson data.
+
+### Learning
+
+#### **1 GET /learning/session/questions**
+
+**Purpose:**
+Given a session id, returns the questions that the user has to answer in that session.
+
+To do this, the question_selection_strategy field in the session table is used to select the questions following this steps:
+
+1. Fetch the session using the session id.
+2. Fetch the question ids that match the session parameters, concept_id, heading_id, topic_id, block_id, min_difficulty and max_difficulty.
+3. Fetch any other questions ids needed depending on the question_selection_strategy.
+4. Execute the question_selection_strategy to select the question ids.
+5. Fetch the questions using the question ids.
+6. Return the questions in the order given by the question_selection_strategy but returning only this fields: id, question, a, b, c.
+
+**Requirements:**
+
+- User must be logged in.
+
+**Inputs:**
+
+- session_id: The id of the session.
+
+**Outputs:**
+
+- List of jsons of full question data.
+
+#### **2 POST /learning/session/start**
+
+**Purpose:**
+Start a session by creating a new row in user_session_history table setting the session_id ,user_id and started_at fields.
+
+**Requirements:**
+
+- User must be logged in.
+
+**Inputs:**
+
+- session_id: The id of the session.
+
+**Outputs:**
+
+- history_id: The id of the created user session history row.
+
+#### **3 POST /learning/session/finish**
+
+**Purpose:**
+Finish a session by updating the user_sessions_history table setting the completed_at field and the passed field.
+
+**Requirements:**
+
+- User must be logged in.
+
+**Inputs:**
+
+- history_id: The id of the user session history row.
+- passed: Boolean value indicating if the session was passed or not.
+
+**Outputs:**
+
+- None.
+
+#### **4 POST /learning/question/answer**
+
+**Purpose:**
+Answer a question given the question id and the answer(a,b or c).
+
+Steps:
+
+1. Fetch the question using the question id.
+2. Check if the answer is correct.
+3. Update the user_questions_history table using the inputs, setting the answered_at field at the current time and the correct field at true if the answer is correct.
+4. Return if the answer is correct.
+
+**Requirements:**
+
+- User must be logged in.
+
+**Inputs:**
+
+- question_id: The id of the question.
+- answer: The answer(a,b or c).
+- session_id: The id of the session.
+- started_at: The time when the question started to fill started_at column in user_questions_history table.
+- asked_for_explanation: Boolean value indicating if the user asked for explanation to fill asked_for_explanation column in user_questions_history table.
+
+**Outputs:**
+
+- Boolean value indicating if the answer is correct or not.
