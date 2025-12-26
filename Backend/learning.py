@@ -450,7 +450,7 @@ async def answer_question(
                 detail="Failed to record question answer in history"
             )
             
-        return AnswerQuestionResponse(correct=is_correct, explanation=explanation)
+        return AnswerQuestionResponse(correct=is_correct, explanation=explanation, correct_answer=correct_option)
         
     except HTTPException:
         raise

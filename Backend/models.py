@@ -284,4 +284,5 @@ class AnswerQuestionResponse(BaseModel):
     """Response model for answering a question."""
     correct: bool = Field(..., description="Whether the answer is correct or not")
     explanation: Optional[str] = Field(None, description="The explanation for the question")
+    correct_answer: str = Field(..., description="The correct answer (a, b, or c)")
 
