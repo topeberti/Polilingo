@@ -24,6 +24,7 @@ import { Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { QuestionPoolInput } from '../components/sessions/QuestionPoolInput';
 import { PoolSelectionCriteria } from '../components/sessions/QuestionPoolSelector';
+import { QUESTION_SELECTION_STRATEGIES } from '../constants/algorithms';
 import React, { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import SortIcon from '@mui/icons-material/Sort';
@@ -69,12 +70,7 @@ const SessionFilter = (props: any) => (
         <SelectInput
             source="question_selection_strategy"
             label="Strategy"
-            choices={[
-                { id: 'random', name: 'Random' },
-                { id: 'weighted_by_difficulty', name: 'Weighted by Difficulty' },
-                { id: 'adaptive', name: 'Adaptive' },
-                { id: 'spaced_repetition', name: 'Spaced Repetition' },
-            ]}
+            choices={QUESTION_SELECTION_STRATEGIES}
         />
     </Filter>
 );
@@ -208,12 +204,7 @@ export const SessionEdit = () => {
                 <NumberInput source="order" label="Order/Position" validate={[required()]} />
                 <SelectInput
                     source="question_selection_strategy"
-                    choices={[
-                        { id: 'random', name: 'Random' },
-                        { id: 'weighted_by_difficulty', name: 'Weighted by Difficulty' },
-                        { id: 'adaptive', name: 'Adaptive' },
-                        { id: 'spaced_repetition', name: 'Spaced Repetition' },
-                    ]}
+                    choices={QUESTION_SELECTION_STRATEGIES}
                     validate={[required()]}
                 />
 
@@ -240,12 +231,7 @@ export const SessionCreate = () => {
                 <NumberInput source="order" label="Order/Position" defaultValue={1} validate={[required()]} />
                 <SelectInput
                     source="question_selection_strategy"
-                    choices={[
-                        { id: 'random', name: 'Random' },
-                        { id: 'weighted_by_difficulty', name: 'Weighted by Difficulty' },
-                        { id: 'adaptive', name: 'Adaptive' },
-                        { id: 'spaced_repetition', name: 'Spaced Repetition' },
-                    ]}
+                    choices={QUESTION_SELECTION_STRATEGIES}
                     defaultValue="random"
                     validate={[required()]}
                 />

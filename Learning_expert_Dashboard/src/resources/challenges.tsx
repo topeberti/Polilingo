@@ -11,6 +11,7 @@ import {
     BooleanInput,
     required,
 } from 'react-admin';
+import { QUESTION_SELECTION_STRATEGIES } from '../constants/algorithms';
 
 export const ChallengeTemplateList = () => (
     <List>
@@ -47,14 +48,7 @@ export const ChallengeTemplateEdit = () => (
             <NumberInput source="number_of_questions" label="Number of Questions" validate={[required()]} />
             <SelectInput
                 source="question_selection_algorithm"
-                choices={[
-                    { id: 'random', name: 'Random' },
-                    { id: 'weakest_topics', name: 'Weakest Topics' },
-                    { id: 'recent_mistakes', name: 'Recent Mistakes' },
-                    { id: 'spaced_repetition', name: 'Spaced Repetition' },
-                    { id: 'difficulty_ascending', name: 'Difficulty Ascending' },
-                    { id: 'high_frequency', name: 'High Frequency' },
-                ]}
+                choices={QUESTION_SELECTION_STRATEGIES}
                 validate={[required()]}
             />
             <SelectInput
@@ -97,14 +91,7 @@ export const ChallengeTemplateCreate = () => (
             <NumberInput source="number_of_questions" label="Number of Questions" defaultValue={10} validate={[required()]} />
             <SelectInput
                 source="question_selection_algorithm"
-                choices={[
-                    { id: 'random', name: 'Random' },
-                    { id: 'weakest_topics', name: 'Weakest Topics' },
-                    { id: 'recent_mistakes', name: 'Recent Mistakes' },
-                    { id: 'spaced_repetition', name: 'Spaced Repetition' },
-                    { id: 'difficulty_ascending', name: 'Difficulty Ascending' },
-                    { id: 'high_frequency', name: 'High Frequency' },
-                ]}
+                choices={QUESTION_SELECTION_STRATEGIES}
                 defaultValue="random"
                 validate={[required()]}
             />
