@@ -33,6 +33,11 @@ class PasswordResetConfirm(BaseModel):
     new_password: str = Field(..., min_length=6, description="New password (min 6 characters)")
 
 
+class RefreshRequest(BaseModel):
+    """Request model for session refresh."""
+    refresh_token: str = Field(..., description="The refresh token provided by Supabase")
+
+
 # Response Models
 
 class UserData(BaseModel):
@@ -84,6 +89,12 @@ class PasswordResetResponse(BaseModel):
 class PasswordResetConfirmResponse(BaseModel):
     """Response model for password reset confirmation."""
     message: str = "Password reset successful. You can now log in with your new password."
+
+
+class RefreshResponse(BaseModel):
+    """Response model for session refresh."""
+    message: str = "Session refreshed successfully"
+    session: SessionData
 
 
 class DeleteUserResponse(BaseModel):

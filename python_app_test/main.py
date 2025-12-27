@@ -25,10 +25,25 @@ def authenticated_menu(token):
 
 def main():
     # Check for existing session on startup
-    token = load_session()
-    if token:
+    session = load_session()
+    if session:
         print("\nRestoring previous session...")
-        authenticated_menu(token)
+        token = session.get("access_token")
+        refresh_t = session.get("refresh_token")
+        
+        # Try a simple authenticated request to verify/refresh token
+        # We'll use /auth/user as a health check
+        from auth import authenticated_request
+        try:
+            resp = authenticated_request("GET", "http://localhost:8000/auth/user")
+            if resp.status_code == 200:
+                # Token is valid (or was refreshed successfully)
+                new_session = load_session() # Reload in case it was refreshed
+                authenticated_menu(new_session.get("access_token"))
+            else:
+                print("Session expired or invalid. Please log in again.")
+        except Exception as e:
+            print(f"Could not restore session: {e}")
 
     while True:
         print("\n=== Polilingo App Selection Menu ===")

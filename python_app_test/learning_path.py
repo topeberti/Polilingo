@@ -1,6 +1,7 @@
 import requests
 import json
 from datetime import datetime
+from auth import authenticated_request
 
 def get_available_sessions(token):
     """
@@ -8,10 +9,9 @@ def get_available_sessions(token):
     Returns a tuple of (sessions_list, lessons_dict, passed_session_ids) or None on error.
     """
     url = "http://localhost:8000/history/sessions/available"
-    headers = {"Authorization": f"Bearer {token}"}
     
     try:
-        response = requests.get(url, headers=headers)
+        response = authenticated_request("GET", url)
         response.raise_for_status()
         data = response.json()
         
@@ -43,10 +43,9 @@ def get_passed_sessions(token):
     Returns a list of passed sessions or empty list on error.
     """
     url = "http://localhost:8000/history/sessions/passed"
-    headers = {"Authorization": f"Bearer {token}"}
     
     try:
-        response = requests.get(url, headers=headers)
+        response = authenticated_request("GET", url)
         response.raise_for_status()
         data = response.json()
         # The API returns {"sessions": [...]}
@@ -92,7 +91,7 @@ def start_interactive_session(token, session):
     # 1. Fetch questions
     try:
         url_q = f"http://localhost:8000/learning/session/questions?session_id={session_id}"
-        resp_q = requests.get(url_q, headers=headers)
+        resp_q = authenticated_request("GET", url_q)
         resp_q.raise_for_status()
         questions = resp_q.json().get("questions", [])
     except Exception as e:
@@ -108,7 +107,7 @@ def start_interactive_session(token, session):
     # 2. Start session
     try:
         url_start = "http://localhost:8000/learning/session/start"
-        resp_start = requests.post(url_start, headers=headers, json={"session_id": session_id})
+        resp_start = authenticated_request("POST", url_start, json={"session_id": session_id})
         resp_start.raise_for_status()
         history_id = resp_start.json().get("id")
     except Exception as e:
@@ -120,11 +119,18 @@ def start_interactive_session(token, session):
     
     # 3. Answer questions loop
     to_answer = questions.copy()
-    incorrect_questions = []
+    round_number = 1
     
     while to_answer:
         current_batch = to_answer
         to_answer = [] # Reset for next round if needed
+        
+        if round_number > 1:
+            print("\n" + "=" * 60)
+            print("RETRIEVING FAILED QUESTIONS")
+            print("=" * 60)
+            print("You are now retrying the failed questions of the session.")
+            input("Press Enter to start the retry round...")
         
         for q in current_batch:
             print("\n" + "-" * 40)
@@ -151,29 +157,47 @@ def start_interactive_session(token, session):
                     "started_at": started_at,
                     "asked_for_explanation": False
                 }
-                resp_ans = requests.post(url_ans, headers=headers, json=payload)
+                resp_ans = authenticated_request("POST", url_ans, json=payload)
                 resp_ans.raise_for_status()
-                is_correct = resp_ans.json().get("correct")
+                result = resp_ans.json()
+                is_correct = result.get("correct")
+                correct_answer = result.get("correct_answer")
+                explanation = result.get("explanation")
                 
                 if is_correct:
-                    print("✅ Correct!")
+                    print(f"✅ Correct! (Correct answer: {correct_answer})")
                 else:
-                    print("❌ Incorrect.")
+                    print(f"❌ Incorrect. The correct answer was: {correct_answer}")
                     to_answer.append(q)
+                
+                while True:
+                    print("\nOptions: [n] Next question, [e] See explanation")
+                    choice = input("Your choice: ").strip().lower()
+                    if choice == 'e':
+                        print("\n" + "-" * 20 + " EXPLANATION " + "-" * 20)
+                        print(explanation or "No explanation available.")
+                        print("-" * 53)
+                        input("\nPress Enter to continue...")
+                        break
+                    elif choice == 'n':
+                        break
+                    else:
+                        print("Invalid choice. Please enter 'n' or 'e'.")
             except Exception as e:
                 print(f"Error submitting answer: {e}")
-                # We add it to repeat if something fails during submission
                 to_answer.append(q)
+        
+        round_number += 1
 
         if to_answer:
-            print(f"\nYou have {len(to_answer)} questions remaining (was incorrect or failed). Repeating them now...")
+            print(f"\nYou have {len(to_answer)} questions remaining. You will need to repeat them.")
         else:
             print("\nAll questions answered correctly!")
 
     # 4. Finish session
     try:
         url_finish = "http://localhost:8000/learning/session/finish"
-        requests.post(url_finish, headers=headers, json={"history_id": history_id, "passed": True})
+        authenticated_request("POST", url_finish, json={"history_id": history_id, "passed": True})
         print("\nSession finished successfully!")
     except Exception as e:
         print(f"Error finishing session: {e}")

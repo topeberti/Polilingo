@@ -17,7 +17,8 @@ from models import (
     PasswordResetRequest, PasswordResetResponse,
     PasswordResetConfirm, PasswordResetConfirmResponse,
     DeleteUserResponse,
-    ErrorResponse, SessionData
+    ErrorResponse, SessionData,
+    RefreshRequest, RefreshResponse
 )
 from middleware import get_current_user, get_current_user_token
 
@@ -157,6 +158,53 @@ async def login(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An unexpected error occurred during login"
+        )
+
+
+@router.post("/refresh", response_model=RefreshResponse)
+async def refresh_session(
+    request: RefreshRequest,
+    supabase: Client = Depends(get_supabase)
+):
+    """
+    Refresh a user session using a refresh token.
+    
+    - **refresh_token**: The refresh token from a previous session
+    
+    Returns a new access token and refresh token.
+    """
+    try:
+        response = supabase.auth.refresh_session(request.refresh_token)
+        
+        if not response.session:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid or expired refresh token"
+            )
+            
+        session_data = SessionData(
+            access_token=response.session.access_token,
+            refresh_token=response.session.refresh_token,
+            expires_in=response.session.expires_in,
+            token_type=response.session.token_type or "bearer"
+        )
+        
+        return RefreshResponse(
+            message="Session refreshed successfully",
+            session=session_data
+        )
+        
+    except AuthApiError as e:
+        logger.error(f"Refresh error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired refresh token"
+        )
+    except Exception as e:
+        logger.error(f"Unexpected refresh error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An unexpected error occurred during session refresh"
         )
 
 

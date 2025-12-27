@@ -50,6 +50,23 @@ Authenticate an existing user.
 
 ---
 
+#### **2.1 POST /auth/refresh**
+
+**Purpose:**
+Refresh a user session using a refresh token.
+
+**Requirements:**
+
+- Accept a valid refresh token.
+- Validate the refresh token with Supabase and issue new access/refresh tokens.
+- Return the new session data.
+
+**Input:**
+
+- refresh_token
+
+---
+
 #### **3. POST /auth/logout**
 
 **Purpose:**

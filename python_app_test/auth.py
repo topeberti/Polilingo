@@ -26,12 +26,13 @@ def login():
         data = response.json()
         
         access_token = data.get("session", {}).get("access_token")
-        if access_token:
+        refresh_token = data.get("session", {}).get("refresh_token")
+        if access_token and refresh_token:
             print("Login successful!")
-            save_session(access_token)
+            save_session(access_token, refresh_token)
             return access_token
         else:
-            print("Login failed: No access token received.")
+            print("Login failed: Incomplete session data received.")
             return None
 
     except requests.exceptions.RequestException as e:
@@ -82,39 +83,99 @@ def signup():
                 print(f"Status Code: {e.response.status_code}")
         return False
 
-def save_session(token):
-    """Saves the bearer token to a local file."""
+def save_session(access_token, refresh_token):
+    """Saves the bearer and refresh tokens to a local file."""
     try:
         with open(SESSION_FILE, "w") as f:
-            json.dump({"access_token": token}, f)
+            json.dump({
+                "access_token": access_token,
+                "refresh_token": refresh_token
+            }, f)
     except Exception as e:
         print(f"Error saving session: {e}")
 
 def load_session():
-    """Loads the bearer token from a local file if it exists."""
+    """Loads the tokens from a local file if it exists."""
     if os.path.exists(SESSION_FILE):
         try:
             with open(SESSION_FILE, "r") as f:
                 data = json.load(f)
-                return data.get("access_token")
+                return data # Returns dict with access_token and refresh_token
         except Exception as e:
             print(f"Error loading session: {e}")
     return None
+
+def refresh_session(refresh_token):
+    """
+    Calls the backend refresh endpoint to get a new access token.
+    Updates the local session file.
+    """
+    url = "http://localhost:8000/auth/refresh"
+    payload = {"refresh_token": refresh_token}
+    
+    try:
+        response = requests.post(url, json=payload)
+        response.raise_for_status()
+        data = response.json()
+        
+        session = data.get("session", {})
+        new_access = session.get("access_token")
+        new_refresh = session.get("refresh_token")
+        
+        if new_access and new_refresh:
+            save_session(new_access, new_refresh)
+            return new_access
+        return None
+    except Exception as e:
+        print(f"Error refreshing session: {e}")
+        return None
+
+def authenticated_request(method, url, **kwargs):
+    """
+    Wrapper for requests that automatically handles authentication and token refresh.
+    """
+    session = load_session()
+    if not session:
+        raise Exception("No active session. Please log in.")
+    
+    token = session.get("access_token")
+    headers = kwargs.get("headers", {})
+    headers["Authorization"] = f"Bearer {token}"
+    kwargs["headers"] = headers
+    
+    # First attempt
+    response = requests.request(method, url, **kwargs)
+    
+    # If unauthorized, try to refresh
+    if response.status_code == 401:
+        refresh_t = session.get("refresh_token")
+        if refresh_t:
+            print("Token expired. Attempting refresh...")
+            new_token = refresh_session(refresh_t)
+            if new_token:
+                # Retry request with new token
+                headers["Authorization"] = f"Bearer {new_token}"
+                kwargs["headers"] = headers
+                response = requests.request(method, url, **kwargs)
+    
+    return response
 
 def logout():
     """Clears the local session and optionally notifies the backend."""
     if os.path.exists(SESSION_FILE):
         try:
             # Load token for backend logout if needed
-            token = load_session()
-            if token:
-                url = "http://localhost:8000/auth/logout"
-                headers = {"Authorization": f"Bearer {token}"}
-                try:
-                    requests.post(url, headers=headers, timeout=5)
-                except:
-                    # Silent fail if server is down or logout fails
-                    pass
+            session_data = load_session()
+            if session_data:
+                token = session_data.get("access_token")
+                if token:
+                    url = "http://localhost:8000/auth/logout"
+                    headers = {"Authorization": f"Bearer {token}"}
+                    try:
+                        requests.post(url, headers=headers, timeout=5)
+                    except:
+                        # Silent fail if server is down or logout fails
+                        pass
             
             os.remove(SESSION_FILE)
             print("Logged out successfully.")
