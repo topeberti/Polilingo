@@ -26,14 +26,7 @@ CREATE TABLE challenge_templates (
     number_of_questions INTEGER NOT NULL CHECK (number_of_questions > 0),
     
     -- Algorithm configuration
-    question_selection_algorithm TEXT NOT NULL CHECK (question_selection_algorithm IN (
-        'random',
-        'weakest_topics',
-        'recent_mistakes',
-        'spaced_repetition',
-        'difficulty_ascending',
-        'high_frequency'
-    )),
+    question_selection_algorithm TEXT NOT NULL,
     scoring_formula TEXT NOT NULL DEFAULT 'standard' CHECK (scoring_formula IN (
         'standard',
         'time_bonus',

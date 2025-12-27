@@ -37,8 +37,7 @@ CREATE TABLE sessions (
     name TEXT NOT NULL,
     "order" INTEGER NOT NULL,
     number_of_questions INTEGER NOT NULL CHECK (number_of_questions > 0),
-    question_selection_strategy TEXT NOT NULL DEFAULT 'random' 
-        CHECK (question_selection_strategy IN ('random', 'weighted_by_difficulty', 'adaptive', 'spaced_repetition')),
+    question_selection_strategy TEXT NOT NULL DEFAULT 'random',
     concept_id UUID REFERENCES concepts(id) ON DELETE SET NULL,
     heading_id UUID REFERENCES headings(id) ON DELETE SET NULL,
     topic_id UUID REFERENCES topics(id) ON DELETE SET NULL,
