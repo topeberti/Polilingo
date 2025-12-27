@@ -46,7 +46,8 @@ def select_random_not_repeated(n: int, pool: List[str], answered: List[str]) -> 
 
 def select_error_review(n: int, question_stats: List[Tuple[str, int, int]]) -> List[str]:
     """
-    Select n questions from the pool weighted by the ratio of wrong to correct answers.
+    Select n questions from the pool weighted by the ratio of wrong to correct answers,
+    without repetition.
     
     Ratio = N_wrong / (N_correct + epsilon)
     
@@ -58,19 +59,19 @@ def select_error_review(n: int, question_stats: List[Tuple[str, int, int]]) -> L
     n = min(n, len(question_stats))
     epsilon = 1e-6
     
-    ratios = []
-    ids = []
+    # Calculate weights and keys for Efraimidis-Spirakis weighted sampling without replacement
+    keys = []
     for q_id, n_correct, n_wrong in question_stats:
         ratio = n_wrong / (n_correct + epsilon)
-        ratios.append(ratio)
-        ids.append(q_id)
+        # We use a small random value if ratio is exactly 0 to allow some selection probability
+        # but keep it proportional if possible.
+        weight = max(ratio, epsilon)
+        # Efraimidis-Spirakis algorithm: key = u^(1/w)
+        key = random.random() ** (1.0 / weight)
+        keys.append((key, q_id))
         
-    total_ratio = sum(ratios)
-    
-    # If all ratios are 0 (e.g. no errors at all), use uniform distribution
-    if total_ratio == 0:
-        weights = [1.0 / len(ids)] * len(ids)
-    else:
-        weights = [r / total_ratio for r in ratios]
+    # Sort by key descending and pick top n
+    keys.sort(key=lambda x: x[0], reverse=True)
+    selected = [q_id for _, q_id in keys[:n]]
         
-    return random.choices(ids, weights=weights, k=n)
+    return selected
