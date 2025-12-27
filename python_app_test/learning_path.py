@@ -209,21 +209,21 @@ def show_learning_path(token):
     Main function to display the learning path menu.
     Shows all available sessions in order with pass/fail status.
     """
-    result = get_available_sessions(token)
-    
-    if result is None:
-        print("\nFailed to load learning path. Returning to main menu.")
-        input("\nPress Enter to continue...")
-        return
-    
-    sessions, lessons_dict, passed_session_ids = result
-    
-    if not sessions:
-        print("\nNo sessions available yet.")
-        input("\nPress Enter to continue...")
-        return
-    
     while True:
+        result = get_available_sessions(token)
+        
+        if result is None:
+            print("\nFailed to load learning path. Returning to main menu.")
+            input("\nPress Enter to continue...")
+            return
+        
+        sessions, lessons_dict, passed_session_ids = result
+        
+        if not sessions:
+            print("\nNo sessions available yet.")
+            input("\nPress Enter to continue...")
+            return
+        
         print("\n" + "=" * 60)
         print("LEARNING PATH")
         print("=" * 60)
