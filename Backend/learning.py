@@ -254,17 +254,23 @@ async def start_session(
                 detail="Session not found"
             )
             
+        # STEP: Mark any previous 'started' sessions for this user as 'abandoned'
+        logger.info(f"Checking for existing 'started' sessions to abandon for user {user_id}")
+        supabase.postgrest.auth(token).from_("user_session_history")\
+            .update({"status": "abandoned"})\
+            .eq("user_id", user_id)\
+            .eq("status", "started")\
+            .execute()
+
         # Create new entry in user_session_history
         from datetime import datetime
         
         data = {
             "user_id": user_id,
             "session_id": request.session_id,
-            "started_at": datetime.utcnow().isoformat()
+            "started_at": datetime.utcnow().isoformat(),
+            "status": "started"
         }
-        
-        
-        
         
         insert_response = supabase.postgrest.auth(token).from_("user_session_history").insert(data).execute()
         
@@ -278,7 +284,7 @@ async def start_session(
         
         logger.info(f"Session {request.session_id} started successfully with history id {new_id}")
         
-        return StartSessionResponse(id=new_id)
+        return StartSessionResponse(id=new_id, status="started")
         
     except HTTPException:
         raise
@@ -333,7 +339,8 @@ async def finish_session(
         
         update_data = {
             "completed_at": datetime.utcnow().isoformat(),
-            "passed": request.passed
+            "passed": request.passed,
+            "status": "completed"
         }
         
         # Add user_id to ensure RLS compliance and extra safety
@@ -344,15 +351,15 @@ async def finish_session(
         logger.info(f"Update executed. Verifying update...")
         
         # Verify if the update actually happened by reading it back
-        verification = supabase.postgrest.auth(token).from_("user_session_history").select("completed_at, passed").eq("id", request.history_id).execute()
+        verification = supabase.postgrest.auth(token).from_("user_session_history").select("completed_at, passed, status").eq("id", request.history_id).execute()
         
         if not verification.data:
             logger.error(f"Verification failed: Row {request.history_id} not found after update")
             raise HTTPException(status_code=500, detail="Row disappeared after update")
             
         row = verification.data[0]
-        if row.get("completed_at") is None or row.get("passed") != request.passed:
-             logger.error(f"Verification failed: Data mismatch. DB: {row}, Expected passed={request.passed}")
+        if row.get("completed_at") is None or row.get("passed") != request.passed or row.get("status") != 'completed':
+             logger.error(f"Verification failed: Data mismatch. DB: {row}, Expected passed={request.passed}, status=completed")
              raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Update operation returned success but data was not updated. Check RLS policies for UPDATE."

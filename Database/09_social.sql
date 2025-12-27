@@ -60,7 +60,8 @@ CREATE TABLE user_challenges_history (
     
     -- Challenge execution
     started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    completed_at TIMESTAMPTZ
+    completed_at TIMESTAMPTZ,
+    status TEXT NOT NULL DEFAULT 'started' CHECK (status IN ('started', 'completed', 'abandoned'))
 );
 
 -- ============================================================================

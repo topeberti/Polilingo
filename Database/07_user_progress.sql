@@ -40,6 +40,7 @@ CREATE TABLE user_session_history (
     -- Session details
     started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     completed_at TIMESTAMPTZ,
+    status TEXT NOT NULL DEFAULT 'started' CHECK (status IN ('started', 'completed', 'abandoned')),
     
     -- Performance
     passed BOOLEAN

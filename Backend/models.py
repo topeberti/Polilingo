@@ -274,6 +274,8 @@ class StartSessionRequest(BaseModel):
 class StartSessionResponse(BaseModel):
     """Response model for starting a session."""
     id: str = Field(..., description="The id of the created user session history row")
+    status: str = Field("started", description="The status of the session")
+
 
 
 class FinishSessionRequest(BaseModel):
