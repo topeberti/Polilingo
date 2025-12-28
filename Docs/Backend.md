@@ -431,3 +431,12 @@ Steps:
 - `explanation`: The explanation text from the question table.
 - `correct_answer`: The correct option (a, b, or c) for the question.
 - `xp_gained`: The amount of XP gained for this answer.
+
+---
+
+### Gamification and Activity Tracking
+
+Note: **Streaks and Daily Activity Tracking** (sessions, lessons, questions) are handled automatically at the database level via PostgreSQL triggers. Any operation that updates the history tables (`user_questions_history`, `user_session_history`, `user_lessons_history`, `user_challenges_history`) will automatically:
+
+1. Update the user's `current_streak` and `longest_streak`.
+2. Log the activity in the `daily_activity_log` table.

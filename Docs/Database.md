@@ -321,12 +321,6 @@ Tracks gamification metrics per user:
 
 - XP to next level: Integer - Points needed to level up
 
-- Current streak: Integer (days) - Consecutive days of activity
-
-- Longest streak: Integer (days) - Best streak ever achieved
-
-- Last streak date: Date - Last day streak was maintained
-
 - Streak freeze count: Integer - Number of streak freezes available
   (power-up that protects streak)
 
@@ -351,6 +345,8 @@ Tracks gamification metrics per user:
 
 - Perfect streak record: Integer - Most consecutive correct answers
   without a mistake
+
+**Note on Streaks:** Streak tracking is automated via database triggers. Any user activity (answering questions, passing sessions/lessons) will automatically update the `current_streak`, `longest_streak`, and `last_streak_date`.
 
 #### Achievements/Badges
 
@@ -553,6 +549,13 @@ Tracks daily user engagement for streak calculation and analytics:
 - Time spent: Integer (minutes) - Total active time
 
 - Streak maintained: Boolean - Whether activity counted toward streak
+
+**Automated Activity Tracking:** The `daily_activity_log` is automatically updated via database triggers whenever a user:
+
+1. Answers a question (`user_questions_history`) -> Increments `questions_answered` and `correct_answers`.
+2. Completes a session (`user_session_history`) -> Increments `sessions_completed` if `passed` is true.
+3. Completes a lesson (`user_lessons_history`) -> Increments `lessons_completed` if `passed` is true.
+4. Completes a challenge (`user_challenges_history`) -> Increments `sessions_completed` (challenges are counted as sessions) if `passed` is true.
 
 #### App Configuration
 
