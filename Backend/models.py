@@ -4,7 +4,7 @@ Pydantic models for request/response validation in the authentication API.
 
 from typing import Optional, Dict, Any, List
 from pydantic import BaseModel, EmailStr, Field
-from datetime import datetime, time as Time
+from datetime import datetime, date, time as Time
 
 
 # Request Models
@@ -135,6 +135,37 @@ class UserProfileData(BaseModel):
     notification_preferences: Optional[Dict[str, bool]] = None
     account_status: str
     role: str
+
+
+class UserGamificationStats(BaseModel):
+    """User gamification statistics model."""
+    total_xp: int
+    current_level: int
+    xp_to_next_level: int
+    current_streak: int
+    longest_streak: int
+    last_streak_date: Optional[date] = None
+
+
+    longest_streak: int
+    last_streak_date: Optional[date] = None
+
+
+class UserProfilePublic(BaseModel):
+    """Public user profile data strict model for /profile endpoint."""
+    username: str
+    email: str
+    full_name: str
+    profile_picture_url: Optional[str] = None
+    preferred_study_time: Optional[Time] = None
+    daily_goal: int
+
+
+class UserProfileResponse(BaseModel):
+    """Response model for getting the full user profile."""
+    user: UserProfilePublic
+    user_gamification_stats: Optional[UserGamificationStats] = None
+
 
 
 class CreateUserResponse(BaseModel):

@@ -14,9 +14,10 @@ from datetime import time as Time
 
 from config import get_supabase
 from models import (
-    CreateUserRequest, CreateUserResponse, 
+    CreateUserRequest, CreateUserResponse,
     UpdateUserRequest, UpdateUserResponse, DeleteUserResponse,
-    UserProfileData
+    UserProfileData, UserProfileResponse, UserGamificationStats,
+    UserProfilePublic
 )
 from middleware import get_current_user, security
 
@@ -226,6 +227,73 @@ async def create_user(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An unexpected error occurred while creating user profile"
+        )
+
+
+@router.get("/profile", response_model=UserProfileResponse)
+async def get_user_profile(
+    current_user = Depends(get_current_user),
+    supabase: Client = Depends(get_supabase),
+    credentials: HTTPAuthorizationCredentials = Security(security)
+):
+    """
+    Get the authenticated user's profile, including gamification stats.
+    
+    Requires authentication.
+    """
+    try:
+        token = credentials.credentials
+        
+        # Fetch user profile data using authenticated client for RLS
+        user_response = supabase.postgrest.auth(token).from_("users").select("*").eq("id", current_user.id).execute()
+        
+        if not user_response.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User profile data not found"
+            )
+            
+        user_data = user_response.data[0]
+        
+        # Fetch gamification stats using authenticated client for RLS
+        stats_response = supabase.postgrest.auth(token).from_("user_gamification_stats").select("*").eq("user_id", current_user.id).execute()
+        
+        # Handle missing stats (shouldn't happen for active users, but safe to handle)
+        gamification_stats = None
+        if stats_response.data:
+            stats_data = stats_response.data[0]
+            gamification_stats = UserGamificationStats(
+                total_xp=stats_data.get("total_xp", 0),
+                current_level=stats_data.get("current_level", 1),
+                xp_to_next_level=stats_data.get("xp_to_next_level", 100),
+                current_streak=stats_data.get("current_streak", 0),
+                longest_streak=stats_data.get("longest_streak", 0),
+                last_streak_date=stats_data.get("last_streak_date")
+            )
+            
+            
+        # Convert user data to pydantic model (Strict public response)
+        user_profile = UserProfilePublic(
+            username=user_data["username"],
+            email=user_data["email"],
+            full_name=user_data.get("full_name", ""),
+            profile_picture_url=user_data.get("profile_picture_url"),
+            preferred_study_time=user_data.get("preferred_study_time"),
+            daily_goal=user_data.get("daily_goal", 5)
+        )
+        
+        return UserProfileResponse(
+            user=user_profile,
+            user_gamification_stats=gamification_stats
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching user profile: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to fetch user profile"
         )
 
 
