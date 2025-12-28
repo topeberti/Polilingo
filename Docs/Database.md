@@ -285,6 +285,8 @@ mentioned in Learning path section):
 
 - Passed: Boolean - Whether user met minimum passing score
 
+- Status: enum (started, completed, abandoned) - Current state of the session. Defaults to 'started'.
+
 #### User Questions History
 
 Detailed record of each question answered within a session or challenge:
@@ -487,6 +489,8 @@ streaks, etc.):
 - Started at: Timestamp
 
 - Completed at: Timestamp - nullable
+
+- Status: enum (started, completed, abandoned) - Current state of the challenge attempt.
 
 #### User Lessons History
 

@@ -369,11 +369,12 @@ To do this, the question_selection_strategy field in the session table is used t
 #### **2 POST /learning/session/start**
 
 **Purpose:**
-Start a session by creating a new row in user_session_history table setting the session_id ,user_id and started_at fields.
+Start a session by creating a new row in user_session_history table setting the session_id, user_id, started_at, and status fields.
 
 **Requirements:**
 
 - User must be logged in.
+- **Automatic Abandonment:** Before starting a new session, the system automatically checks for any existing sessions for the current user with `status = 'started'` and marks them as `abandoned`. This ensures only one session is active at a time and handles force-closed apps.
 
 **Inputs:**
 
@@ -382,11 +383,12 @@ Start a session by creating a new row in user_session_history table setting the 
 **Outputs:**
 
 - history_id: The id of the created user session history row.
+- status: The initial status of the session (usually 'started').
 
 #### **3 POST /learning/session/finish**
 
 **Purpose:**
-Finish a session by updating the user_sessions_history table setting the completed_at field and the passed field.
+Finish a session by updating the user_sessions_history table setting the completed_at field, the passed field, and updating the status to 'completed'.
 
 **Requirements:**
 
