@@ -298,4 +298,5 @@ class AnswerQuestionResponse(BaseModel):
     correct: bool = Field(..., description="Whether the answer is correct or not")
     explanation: Optional[str] = Field(None, description="The explanation for the question")
     correct_answer: str = Field(..., description="The correct answer (a, b, or c)")
+    xp_gained: int = Field(0, description="The amount of XP gained for this answer")
 

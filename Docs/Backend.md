@@ -430,3 +430,4 @@ Steps:
 - `correct`: Boolean value indicating if the answer is correct or not.
 - `explanation`: The explanation text from the question table.
 - `correct_answer`: The correct option (a, b, or c) for the question.
+- `xp_gained`: The amount of XP gained for this answer.

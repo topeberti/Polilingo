@@ -650,6 +650,14 @@ issues:
 10) Challenge Templates
 
 11) Learning Path Configuration
+    - `retry_penalty_enabled` (boolean)
+    - `retry_penalty_percentage` (integer)
+    - `spaced_repetition_intervals` (array)
+    - `minimum_passing_score` (integer)
+    - `daily_xp_goal_default` (integer)
+    - `xp_per_correct_answer` (integer) - Default: 10
+    - `base_xp_per_level` (integer) - Base XP increment for the first level.
+    - `xp_level_multiplier` (decimal) - Multiplier to scale difficulty per level.
 
 #### Phase 2: User System
 

@@ -457,7 +457,22 @@ async def answer_question(
                 detail="Failed to record question answer in history"
             )
             
-        return AnswerQuestionResponse(correct=is_correct, explanation=explanation, correct_answer=correct_option)
+        # Step 4: Determine XP gained
+        xp_gained = 0
+        if is_correct:
+            # Fetch XP reward from configuration
+            config_response = supabase.postgrest.auth(token).from_("learning_path_config").select("config_value").eq("config_key", "xp_per_correct_answer").execute()
+            if config_response.data:
+                xp_gained = int(config_response.data[0]["config_value"])
+            else:
+                xp_gained = 10 # Default fallback
+            
+        return AnswerQuestionResponse(
+            correct=is_correct, 
+            explanation=explanation, 
+            correct_answer=correct_option,
+            xp_gained=xp_gained
+        )
         
     except HTTPException:
         raise
