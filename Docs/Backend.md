@@ -502,3 +502,10 @@ The system implements a life-based progression similar to Duolingo:
 - **Consumption:** 1 life is lost on every incorrect answer in the `/learning/question/answer` endpoint.
 - **Real-time Refill:** Lives are calculated on the fly by measuring the time elapsed since `last_life_lost_at`. This is reflected in `current_lives` across profile and learning responses.
 - **Blocking:** Users cannot answer questions if they have 0 lives.
+
+### Recent Fixes
+
+#### **Corrected Session Ordering in Learning Path (2025-12-30)**
+
+- **Issue:** The `available` and `next` session endpoints previously relied solely on `sessions.order`, ignoring lesson sequence. This caused sessions in subsequent lessons to be missed.
+- **Fix:** Refactored `get_next_session`, `get_available_sessions`, and `get_next_lesson` to use a composite sort key `(lesson.order, session.order)`. This ensures correct progression across lesson boundaries.
