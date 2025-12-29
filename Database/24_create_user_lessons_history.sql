@@ -18,31 +18,30 @@ CREATE TABLE user_lessons_history (
 
 ALTER TABLE user_lessons_history ENABLE ROW LEVEL SECURITY;
 
--- Users can view their own lesson history
+-- Users can view their own lesson history (and admins can view all)
 CREATE POLICY "Users can view their own lesson history"
     ON user_lessons_history FOR SELECT
     TO authenticated
-    USING (auth.uid() = user_id);
+    USING ((SELECT auth.uid()) = user_id OR is_content_admin());
 
--- Users can insert their own lesson history
+-- Users can insert their own lesson history (and admins can insert any)
 CREATE POLICY "Users can insert their own lesson history"
     ON user_lessons_history FOR INSERT
     TO authenticated
-    WITH CHECK (auth.uid() = user_id);
+    WITH CHECK ((SELECT auth.uid()) = user_id OR is_content_admin());
 
--- Users can update their own lesson history
+-- Users can update their own lesson history (and admins can update any)
 CREATE POLICY "Users can update their own lesson history"
     ON user_lessons_history FOR UPDATE
     TO authenticated
-    USING (auth.uid() = user_id)
-    WITH CHECK (auth.uid() = user_id);
+    USING ((SELECT auth.uid()) = user_id OR is_content_admin())
+    WITH CHECK ((SELECT auth.uid()) = user_id OR is_content_admin());
 
--- Content admins and super admins have full access
-CREATE POLICY "Admins can manage user lessons history"
-    ON user_lessons_history FOR ALL
+-- Users can delete their own lesson history (and admins can delete any)
+CREATE POLICY "Users can delete their own lesson history"
+    ON user_lessons_history FOR DELETE
     TO authenticated
-    USING (is_content_admin())
-    WITH CHECK (is_content_admin());
+    USING ((SELECT auth.uid()) = user_id OR is_content_admin());
 
 -- ============================================================================
 -- Indexes for performance

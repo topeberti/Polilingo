@@ -56,67 +56,37 @@ ALTER TABLE app_configuration ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Blocks are viewable by authenticated users"
     ON blocks FOR SELECT
     TO authenticated
-    USING (status = 'active');
-
-CREATE POLICY "Content admins can view all blocks"
-    ON blocks FOR SELECT
-    TO authenticated
-    USING (is_content_admin());
+    USING (status = 'active' OR is_content_admin());
 
 -- Topics
 CREATE POLICY "Topics are viewable by authenticated users"
     ON topics FOR SELECT
     TO authenticated
-    USING (status = 'active');
-
-CREATE POLICY "Content admins can view all topics"
-    ON topics FOR SELECT
-    TO authenticated
-    USING (is_content_admin());
+    USING (status = 'active' OR is_content_admin());
 
 -- Headings
 CREATE POLICY "Headings are viewable by authenticated users"
     ON headings FOR SELECT
     TO authenticated
-    USING (status = 'active');
-
-CREATE POLICY "Content admins can view all headings"
-    ON headings FOR SELECT
-    TO authenticated
-    USING (is_content_admin());
+    USING (status = 'active' OR is_content_admin());
 
 -- Concepts
 CREATE POLICY "Concepts are viewable by authenticated users"
     ON concepts FOR SELECT
     TO authenticated
-    USING (status = 'active');
-
-CREATE POLICY "Content admins can view all concepts"
-    ON concepts FOR SELECT
-    TO authenticated
-    USING (is_content_admin());
+    USING (status = 'active' OR is_content_admin());
 
 -- Questions
 CREATE POLICY "Questions are viewable by authenticated users"
     ON questions FOR SELECT
     TO authenticated
-    USING (status = 'active');
-
-CREATE POLICY "Content admins can view all questions"
-    ON questions FOR SELECT
-    TO authenticated
-    USING (is_content_admin());
+    USING (status = 'active' OR is_content_admin());
 
 -- Lessons
 CREATE POLICY "Lessons are viewable by authenticated users"
     ON lessons FOR SELECT
     TO authenticated
-    USING (status = 'active');
-
-CREATE POLICY "Content admins can view all lessons"
-    ON lessons FOR SELECT
-    TO authenticated
-    USING (is_content_admin());
+    USING (status = 'active' OR is_content_admin());
 
 -- Lesson Prerequisites
 CREATE POLICY "Lesson prerequisites are viewable by authenticated users"
@@ -134,12 +104,7 @@ CREATE POLICY "Sessions are viewable by authenticated users"
 CREATE POLICY "Active challenge templates are viewable by authenticated users"
     ON challenge_templates FOR SELECT
     TO authenticated
-    USING (active = true);
-
-CREATE POLICY "Content admins can view all challenge templates"
-    ON challenge_templates FOR SELECT
-    TO authenticated
-    USING (is_content_admin());
+    USING (active = true OR is_content_admin());
 
 -- Learning Path Config
 CREATE POLICY "Learning path config is viewable by authenticated users"
@@ -408,7 +373,7 @@ CREATE POLICY "Content admins can delete app configuration"
 CREATE POLICY "Users can view their own profile"
     ON users FOR SELECT
     TO authenticated
-    USING (auth.uid() = id);
+    USING ((SELECT auth.uid()) = id);
 
 -- Users can insert their own profile
 CREATE POLICY "Users can insert their own profile"
@@ -420,8 +385,8 @@ CREATE POLICY "Users can insert their own profile"
 CREATE POLICY "Users can update their own profile"
     ON users FOR UPDATE
     TO authenticated
-    USING (auth.uid() = id)
-    WITH CHECK (auth.uid() = id);
+    USING ((SELECT auth.uid()) = id)
+    WITH CHECK ((SELECT auth.uid()) = id);
 
 -- Users can view other users' basic info (for social features)
 CREATE POLICY "Users can view other users' basic info"
@@ -437,60 +402,55 @@ CREATE POLICY "Users can view other users' basic info"
 CREATE POLICY "Users can view their own progress"
     ON user_progress FOR SELECT
     TO authenticated
-    USING (auth.uid() = user_id);
+    USING ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "Users can insert their own progress"
     ON user_progress FOR INSERT
     TO authenticated
-    WITH CHECK (auth.uid() = user_id);
+    WITH CHECK ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "Users can update their own progress"
     ON user_progress FOR UPDATE
     TO authenticated
-    USING (auth.uid() = user_id)
-    WITH CHECK (auth.uid() = user_id);
+    USING ((SELECT auth.uid()) = user_id)
+    WITH CHECK ((SELECT auth.uid()) = user_id);
 
 -- User Session History
 CREATE POLICY "Users can view their own session history"
     ON user_session_history FOR SELECT
     TO authenticated
-    USING (auth.uid() = user_id);
+    USING ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "Users can insert their own session history"
     ON user_session_history FOR INSERT
     TO authenticated
-    WITH CHECK (auth.uid() = user_id);
+    WITH CHECK ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "Users can update their own session history"
     ON user_session_history FOR UPDATE
     TO authenticated
-    USING (auth.uid() = user_id)
-    WITH CHECK (auth.uid() = user_id);
+    USING ((SELECT auth.uid()) = user_id)
+    WITH CHECK ((SELECT auth.uid()) = user_id);
 
 -- User Questions History
 CREATE POLICY "Users can view their own question history"
     ON user_questions_history FOR SELECT
     TO authenticated
-    USING (auth.uid() = user_id);
+    USING ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "Users can insert their own question history"
     ON user_questions_history FOR INSERT
     TO authenticated
-    WITH CHECK (auth.uid() = user_id);
+    WITH CHECK ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "Users can update their own question history"
     ON user_questions_history FOR UPDATE
     TO authenticated
-    USING (auth.uid() = user_id)
-    WITH CHECK (auth.uid() = user_id);
+    USING ((SELECT auth.uid()) = user_id)
+    WITH CHECK ((SELECT auth.uid()) = user_id);
 
 -- User Gamification Stats
-CREATE POLICY "Users can view their own gamification stats"
-    ON user_gamification_stats FOR SELECT
-    TO authenticated
-    USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can view other users' gamification stats"
+CREATE POLICY "Users can view gamification stats"
     ON user_gamification_stats FOR SELECT
     TO authenticated
     USING (true);
@@ -498,30 +458,30 @@ CREATE POLICY "Users can view other users' gamification stats"
 CREATE POLICY "Users can insert their own gamification stats"
     ON user_gamification_stats FOR INSERT
     TO authenticated
-    WITH CHECK (auth.uid() = user_id);
+    WITH CHECK ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "Users can update their own gamification stats"
     ON user_gamification_stats FOR UPDATE
     TO authenticated
-    USING (auth.uid() = user_id)
-    WITH CHECK (auth.uid() = user_id);
+    USING ((SELECT auth.uid()) = user_id)
+    WITH CHECK ((SELECT auth.uid()) = user_id);
 
 -- Daily Activity Log
 CREATE POLICY "Users can view their own activity log"
     ON daily_activity_log FOR SELECT
     TO authenticated
-    USING (auth.uid() = user_id);
+    USING ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "Users can insert their own activity log"
     ON daily_activity_log FOR INSERT
     TO authenticated
-    WITH CHECK (auth.uid() = user_id);
+    WITH CHECK ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "Users can update their own activity log"
     ON daily_activity_log FOR UPDATE
     TO authenticated
-    USING (auth.uid() = user_id)
-    WITH CHECK (auth.uid() = user_id);
+    USING ((SELECT auth.uid()) = user_id)
+    WITH CHECK ((SELECT auth.uid()) = user_id);
 
 -- ============================================================================
 -- Gamification Policies
@@ -534,12 +494,7 @@ CREATE POLICY "Achievements are viewable by authenticated users"
     USING (active = true);
 
 -- User Achievements
-CREATE POLICY "Users can view their own achievements"
-    ON user_achievements FOR SELECT
-    TO authenticated
-    USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can view other users' achievements"
+CREATE POLICY "Users can view achievements"
     ON user_achievements FOR SELECT
     TO authenticated
     USING (true);
@@ -547,13 +502,13 @@ CREATE POLICY "Users can view other users' achievements"
 CREATE POLICY "Users can insert their own achievements"
     ON user_achievements FOR INSERT
     TO authenticated
-    WITH CHECK (auth.uid() = user_id);
+    WITH CHECK ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "Users can update their own achievements"
     ON user_achievements FOR UPDATE
     TO authenticated
-    USING (auth.uid() = user_id)
-    WITH CHECK (auth.uid() = user_id);
+    USING ((SELECT auth.uid()) = user_id)
+    WITH CHECK ((SELECT auth.uid()) = user_id);
 
 -- Leagues (Read-only)
 CREATE POLICY "Active leagues are viewable by authenticated users"
@@ -570,13 +525,13 @@ CREATE POLICY "Users can view league participants"
 CREATE POLICY "Users can insert their own league participation"
     ON league_participants FOR INSERT
     TO authenticated
-    WITH CHECK (auth.uid() = user_id);
+    WITH CHECK ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "Users can update their own league participation"
     ON league_participants FOR UPDATE
     TO authenticated
-    USING (auth.uid() = user_id)
-    WITH CHECK (auth.uid() = user_id);
+    USING ((SELECT auth.uid()) = user_id)
+    WITH CHECK ((SELECT auth.uid()) = user_id);
 
 -- ============================================================================
 -- Social Features Policies
@@ -586,40 +541,40 @@ CREATE POLICY "Users can update their own league participation"
 CREATE POLICY "Users can view their own friendships"
     ON friends FOR SELECT
     TO authenticated
-    USING (auth.uid() = user_id_1 OR auth.uid() = user_id_2);
+    USING ((SELECT auth.uid()) IN (user_id_1, user_id_2));
 
 CREATE POLICY "Users can create friend requests"
     ON friends FOR INSERT
     TO authenticated
-    WITH CHECK (auth.uid() = requested_by AND (auth.uid() = user_id_1 OR auth.uid() = user_id_2));
+    WITH CHECK ((SELECT auth.uid()) = requested_by AND (SELECT auth.uid()) IN (user_id_1, user_id_2));
 
 CREATE POLICY "Users can update their own friendships"
     ON friends FOR UPDATE
     TO authenticated
-    USING (auth.uid() = user_id_1 OR auth.uid() = user_id_2)
-    WITH CHECK (auth.uid() = user_id_1 OR auth.uid() = user_id_2);
+    USING ((SELECT auth.uid()) IN (user_id_1, user_id_2))
+    WITH CHECK ((SELECT auth.uid()) IN (user_id_1, user_id_2));
 
 CREATE POLICY "Users can delete their own friendships"
     ON friends FOR DELETE
     TO authenticated
-    USING (auth.uid() = user_id_1 OR auth.uid() = user_id_2);
+    USING ((SELECT auth.uid()) IN (user_id_1, user_id_2));
 
 -- Friendly Matches
 CREATE POLICY "Users can view their own matches"
     ON friendly_matches FOR SELECT
     TO authenticated
-    USING (auth.uid() = challenger_id OR auth.uid() = opponent_id);
+    USING ((SELECT auth.uid()) IN (challenger_id, opponent_id));
 
 CREATE POLICY "Users can create match challenges"
     ON friendly_matches FOR INSERT
     TO authenticated
-    WITH CHECK (auth.uid() = challenger_id);
+    WITH CHECK ((SELECT auth.uid()) = challenger_id);
 
 CREATE POLICY "Users can update their own matches"
     ON friendly_matches FOR UPDATE
     TO authenticated
-    USING (auth.uid() = challenger_id OR auth.uid() = opponent_id)
-    WITH CHECK (auth.uid() = challenger_id OR auth.uid() = opponent_id);
+    USING ((SELECT auth.uid()) IN (challenger_id, opponent_id))
+    WITH CHECK ((SELECT auth.uid()) IN (challenger_id, opponent_id));
 
 -- User Challenges History
 ALTER TABLE user_challenges_history ENABLE ROW LEVEL SECURITY;
@@ -630,18 +585,18 @@ ALTER TABLE user_challenges_history ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view their own challenge history"
     ON user_challenges_history FOR SELECT
     TO authenticated
-    USING (auth.uid() = user_id);
+    USING ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "Users can insert their own challenge history"
     ON user_challenges_history FOR INSERT
     TO authenticated
-    WITH CHECK (auth.uid() = user_id);
+    WITH CHECK ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "Users can update their own challenge history"
     ON user_challenges_history FOR UPDATE
     TO authenticated
-    USING (auth.uid() = user_id)
-    WITH CHECK (auth.uid() = user_id);
+    USING ((SELECT auth.uid()) = user_id)
+    WITH CHECK ((SELECT auth.uid()) = user_id);
 
 -- ============================================================================
 -- Notifications Policies
@@ -650,18 +605,18 @@ CREATE POLICY "Users can update their own challenge history"
 CREATE POLICY "Users can view their own notifications"
     ON notifications FOR SELECT
     TO authenticated
-    USING (auth.uid() = user_id);
+    USING ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "Users can update their own notifications"
     ON notifications FOR UPDATE
     TO authenticated
-    USING (auth.uid() = user_id)
-    WITH CHECK (auth.uid() = user_id);
+    USING ((SELECT auth.uid()) = user_id)
+    WITH CHECK ((SELECT auth.uid()) = user_id);
 
 CREATE POLICY "Users can delete their own notifications"
     ON notifications FOR DELETE
     TO authenticated
-    USING (auth.uid() = user_id);
+    USING ((SELECT auth.uid()) = user_id);
 
 -- ============================================================================
 -- App Configuration Policies (Read-only)

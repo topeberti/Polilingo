@@ -618,6 +618,10 @@ access:
 
 - Row Level Security (RLS) must be enabled on all user-related tables
 
+- **Performance Optimization**: RLS policies should wrap `auth.uid()` calls in a subquery `(SELECT auth.uid())` to prevent row-by-row re-evaluation and improve query performance.
+
+- **Consolidated Policies**: Avoid multiple permissive policies for the same role and action on a single table. Consolidate logic into single policies for better maintainability and performance.
+
 - Users can read/write their own data (User Progress, User Session
   History, User Gamification Stats, etc.) including updates
 
