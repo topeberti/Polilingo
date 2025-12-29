@@ -243,54 +243,31 @@ async def get_next_session(
             .eq("passed", True) \
             .execute()
         
-        passed_data = history_response.data
+        passed_ids = [item['session_id'] for item in history_response.data] if history_response.data else []
         
-        if not passed_data:
-            # User hasn't passed any sessions, return the first session (lowest order globally)
-            # Note: This globally finds the first session.
-            session_response = supabase.postgrest.auth(token).from_("sessions") \
-                .select("*") \
-                .order('"order"', desc=False) \
-                .limit(1) \
-                .execute()
-            
-            if session_response.data:
-                return NextSessionResponse(session=Session(**session_response.data[0]))
+        # 2. Get all sessions with their lesson order to determine the global sequence
+        sessions_response = supabase.postgrest.auth(token).from_("sessions") \
+            .select("*, lessons!inner(order)") \
+            .execute()
+        
+        if not sessions_response.data:
             return NextSessionResponse(session=None)
-
-        # 2. Get the highest order among passed sessions
-        passed_ids = [item['session_id'] for item in passed_data]
+            
+        # 3. Sort sessions by lesson order then session order
+        sorted_sessions = sorted(
+            sessions_response.data,
+            key=lambda x: (x['lessons']['order'], x['order'])
+        )
         
-        # Query sessions table to get orders for these IDs
-        sessions_info_response = supabase.postgrest.auth(token).from_("sessions") \
-            .select('"order"') \
-            .in_("id", passed_ids) \
-            .execute()
+        # 4. Find the first session that has not been passed
+        next_session_data = None
+        for s in sorted_sessions:
+            if s['id'] not in passed_ids:
+                next_session_data = s
+                break
         
-        if not sessions_info_response.data:
-             # Fallback
-             session_response = supabase.postgrest.auth(token).from_("sessions") \
-                .select("*") \
-                .order('"order"', desc=False) \
-                .limit(1) \
-                .execute()
-             
-             if session_response.data:
-                 return NextSessionResponse(session=Session(**session_response.data[0]))
-             return NextSessionResponse(session=None)
-
-        max_passed_order = max(item['order'] for item in sessions_info_response.data)
-
-        # 3. Find the next session with order > max_passed_order
-        next_session_response = supabase.postgrest.auth(token).from_("sessions") \
-            .select("*") \
-            .gt('"order"', max_passed_order) \
-            .order('"order"', desc=False) \
-            .limit(1) \
-            .execute()
-        
-        if next_session_response.data:
-            return NextSessionResponse(session=Session(**next_session_response.data[0]))
+        if next_session_data:
+            return NextSessionResponse(session=Session(**next_session_data))
         
         # All sessions completed
         return NextSessionResponse(session=None)
@@ -337,57 +314,27 @@ async def get_next_lesson(
             .eq("passed", True) \
             .execute()
         
-        passed_data = history_response.data
+        passed_ids = [item['lesson_id'] for item in history_response.data] if history_response.data else []
         
-        if not passed_data:
-            # User hasn't passed any lessons, return the first active lesson
-            lesson_response = supabase.postgrest.auth(token).from_("lessons") \
-                .select("*") \
-                .eq("status", "active") \
-                .order('"order"', desc=False) \
-                .limit(1) \
-                .execute()
-            
-            if lesson_response.data:
-                return NextLessonResponse(lesson=Lesson(**lesson_response.data[0]))
-            return NextLessonResponse(lesson=None)
-
-        # 2. Get the highest order among passed lessons
-        passed_ids = [item['lesson_id'] for item in passed_data]
-        
-        # Query lessons table to get orders for these IDs
-        lessons_info_response = supabase.postgrest.auth(token).from_("lessons") \
-            .select('"order"') \
-            .in_("id", passed_ids) \
-            .execute()
-        
-        if not lessons_info_response.data:
-             # This shouldn't happen if database integrity is maintained
-             # But as a fallback, return the first lesson
-             lesson_response = supabase.postgrest.auth(token).from_("lessons") \
-                .select("*") \
-                .eq("status", "active") \
-                .order('"order"', desc=False) \
-                .limit(1) \
-                .execute()
-             
-             if lesson_response.data:
-                 return NextLessonResponse(lesson=Lesson(**lesson_response.data[0]))
-             return NextLessonResponse(lesson=None)
-
-        max_passed_order = max(item['order'] for item in lessons_info_response.data)
-
-        # 3. Find the next lesson with order > max_passed_order
-        next_lesson_response = supabase.postgrest.auth(token).from_("lessons") \
+        # 2. Find all active lessons in order
+        lessons_response = supabase.postgrest.auth(token).from_("lessons") \
             .select("*") \
             .eq("status", "active") \
-            .gt('"order"', max_passed_order) \
             .order('"order"', desc=False) \
-            .limit(1) \
             .execute()
         
-        if next_lesson_response.data:
-            return NextLessonResponse(lesson=Lesson(**next_lesson_response.data[0]))
+        if not lessons_response.data:
+            return NextLessonResponse(lesson=None)
+            
+        # 3. Find the first lesson that has not been passed
+        next_lesson_data = None
+        for l in lessons_response.data:
+            if l['id'] not in passed_ids:
+                next_lesson_data = l
+                break
+        
+        if next_lesson_data:
+            return NextLessonResponse(lesson=Lesson(**next_lesson_data))
         
         # All lessons completed
         return NextLessonResponse(lesson=None)
@@ -426,36 +373,26 @@ async def get_available_sessions(
         
         passed_ids = [item['session_id'] for item in history_response.data] if history_response.data else []
         
-        # 2. Find the next session (same logic as get_next_session)
-        next_session_id = None
-        if not passed_ids:
-            # Get the first session globally
-            first_session_response = supabase.postgrest.auth(token).from_("sessions") \
-                .select("id") \
-                .order('"order"', desc=False) \
-                .limit(1) \
-                .execute()
-            if first_session_response.data:
-                next_session_id = first_session_response.data[0]['id']
-        else:
-            # Get order of passed sessions
-            sessions_info_response = supabase.postgrest.auth(token).from_("sessions") \
-                .select('"order"') \
-                .in_("id", passed_ids) \
-                .execute()
+        # 2. Fetch all sessions with lesson info to determine the next one and global sequence
+        all_sessions_response = supabase.postgrest.auth(token).from_("sessions") \
+            .select("*, lessons!inner(order)") \
+            .execute()
             
-            if sessions_info_response.data:
-                max_passed_order = max(item['order'] for item in sessions_info_response.data)
-                
-                # Find the next session
-                next_session_response = supabase.postgrest.auth(token).from_("sessions") \
-                    .select("id") \
-                    .gt('"order"', max_passed_order) \
-                    .order('"order"', desc=False) \
-                    .limit(1) \
-                    .execute()
-                if next_session_response.data:
-                    next_session_id = next_session_response.data[0]['id']
+        if not all_sessions_response.data:
+            return AvailableSessionsResponse(sessions=[], lessons=[])
+            
+        # 3. Sort sessions by lesson order then session order
+        sorted_all_sessions = sorted(
+            all_sessions_response.data,
+            key=lambda x: (x['lessons']['order'], x['order'])
+        )
+        
+        # 4. Find the first session that has not been passed
+        next_session_id = None
+        for s in sorted_all_sessions:
+            if s['id'] not in passed_ids:
+                next_session_id = s['id']
+                break
 
         # 3. Combine IDs
         available_ids = passed_ids
