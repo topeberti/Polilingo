@@ -409,6 +409,7 @@ Start a session by creating a new row in user_session_history table setting the 
 
 - User must be logged in.
 - **Automatic Abandonment:** Before starting a new session, the system automatically checks for any existing sessions for the current user with `status = 'started'` and marks them as `abandoned`. This ensures only one session is active at a time and handles force-closed apps.
+- **Lesson History Tracking:** Starting a session automatically ensures an entry in `user_lessons_history` exists for the parent lesson. If it doesn't exist, it is created.
 
 **Inputs:**
 
@@ -427,6 +428,7 @@ Finish a session by updating the user_sessions_history table setting the complet
 **Requirements:**
 
 - User must be logged in.
+- **Lesson Completion:** When the last session of a lesson (the one with the highest `order`) is finished and passed, the parent lesson in `user_lessons_history` is automatically marked as completed and passed.
 
 **Inputs:**
 
