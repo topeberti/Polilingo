@@ -4,7 +4,9 @@
 -- Calculates "effective lives" in real-time based on elapsed time
 -- ============================================================================
 
-CREATE OR REPLACE VIEW view_user_lives AS
+CREATE OR REPLACE VIEW view_user_lives 
+WITH (security_invoker = true)
+AS
 WITH config AS (
     SELECT 
         (SELECT config_value::INTEGER FROM learning_path_config WHERE config_key = 'max_lives') as max_lives,
