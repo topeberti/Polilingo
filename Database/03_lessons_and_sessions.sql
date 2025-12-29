@@ -2,7 +2,7 @@
 -- LESSONS AND SESSIONS TABLES
 -- ============================================================================
 -- Defines the structure of lessons and their component sessions
--- Lessons contain ordered sessions, which contain question pools
+-- Lessons contain ordered sessions
 -- ============================================================================
 
 -- Lessons Table
@@ -48,16 +48,6 @@ CREATE TABLE sessions (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Session Question Pool Table
--- Links sessions to their available questions (many-to-many)
-CREATE TABLE session_question_pool (
-    session_id UUID NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
-    question_id UUID NOT NULL REFERENCES questions(id) ON DELETE CASCADE,
-    weight INTEGER,
-    active BOOLEAN NOT NULL DEFAULT true,
-    added_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (session_id, question_id)
-);
 
 -- ============================================================================
 -- Triggers for automatic timestamp updates
@@ -76,7 +66,6 @@ CREATE TRIGGER update_sessions_updated_at BEFORE UPDATE ON sessions
 COMMENT ON TABLE lessons IS 'Learning lessons composed of ordered sessions';
 COMMENT ON TABLE lesson_prerequisites IS 'Prerequisite relationships between lessons';
 COMMENT ON TABLE sessions IS 'Question sessions within lessons';
-COMMENT ON TABLE session_question_pool IS 'Available questions for each session';
+COMMENT ON TABLE sessions IS 'Question sessions within lessons';
 
 COMMENT ON COLUMN sessions.question_selection_strategy IS 'How questions are sampled: random, weighted_by_difficulty, adaptive, or spaced_repetition';
-COMMENT ON COLUMN session_question_pool.weight IS 'Optional weight for weighted_by_difficulty selection strategy';

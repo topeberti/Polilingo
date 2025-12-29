@@ -23,10 +23,6 @@ CREATE INDEX idx_lessons_order ON lessons("order");
 CREATE INDEX idx_lessons_status ON lessons(status);
 CREATE INDEX idx_lessons_order_status ON lessons("order", status);
 
--- Session Question Pool: Frequently joined
-CREATE INDEX idx_session_question_pool_session_id ON session_question_pool(session_id);
-CREATE INDEX idx_session_question_pool_question_id ON session_question_pool(question_id);
-CREATE INDEX idx_session_question_pool_active ON session_question_pool(session_id, active);
 
 -- Hierarchy tables: Frequently queried by parent and order
 CREATE INDEX idx_topics_block_id ON topics(block_id);

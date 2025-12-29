@@ -175,45 +175,6 @@ export const Dashboard = () => {
                     }
                 }
 
-                // Check lessons - count questions through sessions
-                const allLessons = await dataProvider.getList('lessons', {
-                    pagination: { page: 1, perPage: 1000 },
-                    sort: { field: 'id', order: 'ASC' },
-                    filter: { status: 'active' }
-                });
-
-                for (const lesson of allLessons.data) {
-                    // Get all sessions for this lesson
-                    const lessonSessions = await dataProvider.getList('sessions', {
-                        pagination: { page: 1, perPage: 1000 },
-                        sort: { field: 'id', order: 'ASC' },
-                        filter: { lesson_id: lesson.id }
-                    });
-
-                    // Count total unique questions in all sessions
-                    const questionIds = new Set<string>();
-                    for (const session of lessonSessions.data) {
-                        const sessionQuestions = await dataProvider.getList('session_question_pool', {
-                            pagination: { page: 1, perPage: 1000 },
-                            sort: { field: 'id', order: 'ASC' },
-                            filter: { session_id: session.id }
-                        });
-
-                        sessionQuestions.data.forEach((sq: any) => {
-                            questionIds.add(sq.question_id);
-                        });
-                    }
-
-                    const totalQuestions = questionIds.size;
-                    if (totalQuestions < 10) {
-                        lowQuestionWarnings.push({
-                            id: lesson.id,
-                            name: lesson.name,
-                            questionCount: totalQuestions,
-                            type: 'lesson'
-                        });
-                    }
-                }
 
                 setLowQuestionItems(lowQuestionWarnings);
             } catch (error) {

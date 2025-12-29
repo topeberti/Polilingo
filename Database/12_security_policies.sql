@@ -21,7 +21,6 @@ ALTER TABLE questions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE lessons ENABLE ROW LEVEL SECURITY;
 ALTER TABLE lesson_prerequisites ENABLE ROW LEVEL SECURITY;
 ALTER TABLE sessions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE session_question_pool ENABLE ROW LEVEL SECURITY;
 ALTER TABLE challenge_templates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE learning_path_config ENABLE ROW LEVEL SECURITY;
 
@@ -130,17 +129,6 @@ CREATE POLICY "Sessions are viewable by authenticated users"
     ON sessions FOR SELECT
     TO authenticated
     USING (true);
-
--- Session Question Pool
-CREATE POLICY "Session question pool is viewable by authenticated users"
-    ON session_question_pool FOR SELECT
-    TO authenticated
-    USING (active = true);
-
-CREATE POLICY "Content admins can view all session question pool"
-    ON session_question_pool FOR SELECT
-    TO authenticated
-    USING (is_content_admin());
 
 -- Challenge Templates
 CREATE POLICY "Active challenge templates are viewable by authenticated users"
@@ -323,23 +311,6 @@ CREATE POLICY "Content admins can update sessions"
 
 CREATE POLICY "Content admins can delete sessions"
     ON sessions FOR DELETE
-    TO authenticated
-    USING (is_content_admin());
-
--- Session Question Pool
-CREATE POLICY "Content admins can insert session question pool"
-    ON session_question_pool FOR INSERT
-    TO authenticated
-    WITH CHECK (is_content_admin());
-
-CREATE POLICY "Content admins can update session question pool"
-    ON session_question_pool FOR UPDATE
-    TO authenticated
-    USING (is_content_admin())
-    WITH CHECK (is_content_admin());
-
-CREATE POLICY "Content admins can delete session question pool"
-    ON session_question_pool FOR DELETE
     TO authenticated
     USING (is_content_admin());
 

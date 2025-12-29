@@ -325,30 +325,8 @@ export const dataProvider: DataProvider = {
         return { data: params.ids };
     },
 
-    // Custom methods for question pool
-    populateSessionQuestionPool: async (params: {
-        sessionId: string;
-        blockId?: string;
-        topicId?: string;
-        headingId?: string;
-        conceptId?: string;
-        minDifficulty?: number;
-        maxDifficulty?: number;
-    }) => {
-        const { data, error } = await supabase.rpc('populate_session_question_pool', {
-            p_session_id: params.sessionId,
-            p_block_id: params.blockId || null,
-            p_topic_id: params.topicId || null,
-            p_heading_id: params.headingId || null,
-            p_concept_id: params.conceptId || null,
-            p_min_difficulty: params.minDifficulty || null,
-            p_max_difficulty: params.maxDifficulty || null,
-        });
 
-        if (error) throw new Error(`Failed to populate question pool: ${error.message}`);
-        return { data };
-    },
-
+    // Custom method for question preview
     getQuestionCountByCriteria: async (params: {
         blockId?: string;
         topicId?: string;
@@ -365,7 +343,6 @@ export const dataProvider: DataProvider = {
             p_min_difficulty: params.minDifficulty || null,
             p_max_difficulty: params.maxDifficulty || null,
         });
-
 
         if (error) throw new Error(`Failed to get question count: ${error.message}`);
         return { data };
