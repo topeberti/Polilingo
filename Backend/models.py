@@ -145,6 +145,10 @@ class UserGamificationStats(BaseModel):
     current_streak: int
     longest_streak: int
     last_streak_date: Optional[date] = None
+    lives: int = 5
+    last_life_lost_at: datetime
+    current_lives: int = 5
+    next_life_at: Optional[datetime] = None
 
 
 class UserProfilePublic(BaseModel):
@@ -302,6 +306,8 @@ class StartSessionResponse(BaseModel):
     """Response model for starting a session."""
     id: str = Field(..., description="The id of the created user session history row")
     status: str = Field("started", description="The status of the session")
+    lives_remaining: int = Field(5, description="The number of lives the user has left")
+    next_life_at: Optional[datetime] = Field(None, description="The time when the next life will be refilled")
 
 
 
@@ -326,4 +332,6 @@ class AnswerQuestionResponse(BaseModel):
     explanation: Optional[str] = Field(None, description="The explanation for the question")
     correct_answer: str = Field(..., description="The correct answer (a, b, or c)")
     xp_gained: int = Field(0, description="The amount of XP gained for this answer")
+    lives_remaining: int = Field(5, description="The number of lives the user has left")
+    next_life_at: Optional[datetime] = Field(None, description="The time when the next life will be refilled")
 

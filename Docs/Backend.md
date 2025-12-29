@@ -267,6 +267,10 @@ Get the authenticated user's profile.
     - total_lessons_completed
     - total_questions_answered
     - total_correct_answers
+    - lives: Stored lives count.
+    - last_life_lost_at: Timestamp of the last life lost.
+    - current_lives: Real-time calculated lives (taking into account refills).
+    - next_life_at: Timestamp for the next life refill (if applicable).
 
 ### History
 
@@ -419,6 +423,8 @@ Start a session by creating a new row in user_session_history table setting the 
 
 - history_id: The id of the created user session history row.
 - status: The initial status of the session (usually 'started').
+- lives_remaining: The number of lives the user currently has.
+- next_life_at: The time when the next life will be refilled.
 
 #### **3 POST /learning/session/finish**
 
@@ -449,7 +455,13 @@ Steps:
 1. Fetch the question using the question id.
 2. Check if the answer is correct.
 3. Update the user_questions_history table using the inputs, setting the answered_at field at the current time and the correct field at true if the answer is correct.
-4. Return if the answer is correct.
+4. Return if the answer is correct and lives status.
+
+**Lives System Enforcement:**
+
+- Before processing the answer, the system checks if the user has `current_lives > 0`.
+- If a user has 0 lives, it returns a `403 Forbidden` error.
+- If the answer is incorrect, one life is deducted and the `last_life_lost_at` timestamp is updated to the current time.
 
 **Requirements:**
 
@@ -469,6 +481,8 @@ Steps:
 - `explanation`: The explanation text from the question table.
 - `correct_answer`: The correct option (a, b, or c) for the question.
 - `xp_gained`: The amount of XP gained for this answer.
+- `lives_remaining`: The number of lives remaining after this answer.
+- `next_life_at`: The time when the next life will be refilled.
 
 ---
 
@@ -478,3 +492,13 @@ Note: **Streaks and Daily Activity Tracking** (sessions, lessons, questions) are
 
 1. Update the user's `current_streak` and `longest_streak`.
 2. Log the activity in the `daily_activity_log` table.
+
+### Hearts/Lives System
+
+The system implements a life-based progression similar to Duolingo:
+
+- **Max Lives:** Default is 5 (configurable).
+- **Refill Interval:** Default is 1 life every 4 hours (configurable).
+- **Consumption:** 1 life is lost on every incorrect answer in the `/learning/question/answer` endpoint.
+- **Real-time Refill:** Lives are calculated on the fly by measuring the time elapsed since `last_life_lost_at`. This is reflected in `current_lives` across profile and learning responses.
+- **Blocking:** Users cannot answer questions if they have 0 lives.

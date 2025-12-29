@@ -109,13 +109,28 @@ def start_interactive_session(token, session):
         url_start = "http://localhost:8000/learning/session/start"
         resp_start = authenticated_request("POST", url_start, json={"session_id": session_id})
         resp_start.raise_for_status()
-        history_id = resp_start.json().get("id")
+    except requests.exceptions.HTTPError as e:
+        if e.response.status_code == 403:
+            print("\n❌ Cannot start session: No lives remaining.")
+            try:
+                error_detail = e.response.json().get("detail", "")
+                print(f"Message: {error_detail}")
+            except:
+                pass
+        else:
+            print(f"Error starting session: {e}")
+        input("\nPress Enter to return...")
+        return
     except Exception as e:
         print(f"Error starting session: {e}")
         input("\nPress Enter to return...")
         return
 
-    print(f"Session started! (History ID: {history_id})")
+    data_start = resp_start.json()
+    history_id = data_start.get("id")
+    current_lives = data_start.get("lives_remaining", 5)
+    
+    print(f"Session started! (History ID: {history_id}) | Lives: {'❤️' * current_lives} ({current_lives})")
     
     # 3. Answer questions loop
     to_answer = questions.copy()
@@ -138,6 +153,7 @@ def start_interactive_session(token, session):
             print(f"a) {q['a']}")
             print(f"b) {q['b']}")
             print(f"c) {q['c']}")
+            print(f"Lives: {'❤️' * current_lives} ({current_lives})")
             
             started_at = datetime.utcnow().isoformat() + "Z"
             
@@ -170,6 +186,10 @@ def start_interactive_session(token, session):
                     print(f"❌ Incorrect. The correct answer was: {correct_answer}")
                     to_answer.append(q)
                 
+                # Update lives from response
+                current_lives = result.get("lives_remaining", current_lives)
+                print(f"Remaining Lives: {'❤️' * current_lives} ({current_lives})")
+                
                 while True:
                     print("\nOptions: [n] Next question, [e] See explanation")
                     choice = input("Your choice: ").strip().lower()
@@ -183,6 +203,15 @@ def start_interactive_session(token, session):
                         break
                     else:
                         print("Invalid choice. Please enter 'n' or 'e'.")
+            except requests.exceptions.HTTPError as e:
+                if e.response.status_code == 403:
+                    print("\n❌ SESSION INTERRUPTED: No lives remaining.")
+                    print("You cannot continue this session until your lives refill.")
+                    input("\nPress Enter to return to menu...")
+                    return
+                else:
+                    print(f"Error submitting answer: {e}")
+                    to_answer.append(q)
             except Exception as e:
                 print(f"Error submitting answer: {e}")
                 to_answer.append(q)

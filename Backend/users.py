@@ -20,6 +20,7 @@ from models import (
     UserProfilePublic
 )
 from middleware import get_current_user, security
+from lives_service import LivesService
 
 logger = logging.getLogger(__name__)
 
@@ -261,14 +262,22 @@ async def get_user_profile(
         # Handle missing stats (shouldn't happen for active users, but safe to handle)
         gamification_stats = None
         if stats_response.data:
+            # Fetch real-time lives status
+            lives_service = LivesService(supabase, token)
+            lives_status = await lives_service.get_current_lives(current_user.id)
             stats_data = stats_response.data[0]
+            
             gamification_stats = UserGamificationStats(
                 total_xp=stats_data.get("total_xp", 0),
                 current_level=stats_data.get("current_level", 1),
                 xp_to_next_level=stats_data.get("xp_to_next_level", 100),
                 current_streak=stats_data.get("current_streak", 0),
                 longest_streak=stats_data.get("longest_streak", 0),
-                last_streak_date=stats_data.get("last_streak_date")
+                last_streak_date=stats_data.get("last_streak_date"),
+                lives=stats_data.get("lives", 5),
+                last_life_lost_at=stats_data.get("last_life_lost_at", stats_data.get("updated_at")),
+                current_lives=lives_status["current_lives"],
+                next_life_at=lives_status.get("next_life_at")
             )
             
             

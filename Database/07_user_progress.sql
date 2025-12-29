@@ -89,6 +89,10 @@ CREATE TABLE user_gamification_stats (
     longest_streak INTEGER NOT NULL DEFAULT 0,
     last_streak_date DATE,
     
+    -- Lives
+    lives INTEGER NOT NULL DEFAULT 5,
+    last_life_lost_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    
     -- Timestamps
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

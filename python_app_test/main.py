@@ -39,6 +39,17 @@ def show_user_profile(profile_data):
         print(f"Lessons Completed: {stats.get('total_lessons_completed')}")
         print(f"Questions Answered: {stats.get('total_questions_answered')}")
         print(f"Correct Answers: {stats.get('total_correct_answers')}")
+        
+        # Lives Info
+        lives = stats.get('current_lives', stats.get('lives', 5))
+        print(f"\n--- Lives ---")
+        print(f"Current Lives: {'❤️' * lives} ({lives})")
+        if stats.get('next_life_at'):
+            next_life = stats.get('next_life_at')
+            # Handle both string and datetime
+            if isinstance(next_life, str):
+                next_life = next_life.split('.')[0].replace('T', ' ')
+            print(f"Next Life At: {next_life}")
     else:
         print("No gamification stats available yet.")
         
@@ -56,9 +67,10 @@ def authenticated_menu(token):
             stats = profile_data.get("user_gamification_stats", {})
             if stats:
                 level = stats.get("current_level", "?")
+                lives = stats.get("current_lives", 5)
                 
         print("\n=== Polilingo Main Menu (Authenticated) ===")
-        print(f"Logged in as: {username} [Level {level}]")
+        print(f"Logged in as: {username} [Level {level}] | Lives: {'❤️' * lives} ({lives})")
         print("1. Learning Path")
         print("2. View Profile")
         print("3. Logout")

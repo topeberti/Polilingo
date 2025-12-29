@@ -13,6 +13,7 @@ from config import get_supabase
 from models import LearningQuestion, SessionQuestionsResponse, StartSessionRequest, FinishSessionRequest, StartSessionResponse, AnswerQuestionRequest, AnswerQuestionResponse
 from middleware import get_current_user, security
 from pool_algorithms import select_random, select_random_not_repeated, select_error_review
+from lives_service import LivesService
 
 logger = logging.getLogger(__name__)
 
@@ -282,9 +283,18 @@ async def start_session(
             
         new_id = insert_response.data[0]["id"]
         
+        # Fetch current lives status
+        lives_service = LivesService(supabase, token)
+        lives_status = await lives_service.get_current_lives(user_id)
+        
         logger.info(f"Session {request.session_id} started successfully with history id {new_id}")
         
-        return StartSessionResponse(id=new_id, status="started")
+        return StartSessionResponse(
+            id=new_id, 
+            status="started",
+            lives_remaining=lives_status["current_lives"],
+            next_life_at=lives_status.get("next_life_at")
+        )
         
     except HTTPException:
         raise
@@ -415,7 +425,17 @@ async def answer_question(
         token = credentials.credentials
         user_id = current_user.id
         
-        logger.info(f"User {user_id} answering question {request.question_id} in history {request.user_session_history_id}")
+        # Step 0: Check lives
+        lives_service = LivesService(supabase, token)
+        lives_status = await lives_service.get_current_lives(user_id)
+        
+        if lives_status["current_lives"] <= 0:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="No lives remaining. Wait for refill or purchase more."
+            )
+            
+        logger.info(f"User {user_id} answering question {request.question_id} in history {request.user_session_history_id}. Lives: {lives_status['current_lives']}")
         
         # Step 1: Fetch the question
         question_response = supabase.postgrest.auth(token).from_("questions").select("correct_option, explanation").eq("id", request.question_id).execute()
@@ -467,11 +487,17 @@ async def answer_question(
             else:
                 xp_gained = 10 # Default fallback
             
+        # Step 5: Update lives if incorrect
+        if not is_correct:
+            lives_status = await lives_service.consume_life(user_id)
+            
         return AnswerQuestionResponse(
             correct=is_correct, 
             explanation=explanation, 
             correct_answer=correct_option,
-            xp_gained=xp_gained
+            xp_gained=xp_gained,
+            lives_remaining=lives_status["current_lives"],
+            next_life_at=lives_status.get("next_life_at")
         )
         
     except HTTPException:

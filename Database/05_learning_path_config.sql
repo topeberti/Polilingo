@@ -28,7 +28,9 @@ INSERT INTO learning_path_config (config_key, config_value, data_type, descripti
     ('streak_freeze_cost', '100', 'integer', 'XP cost to purchase a streak freeze', 'gamification'),
     ('league_week_start_day', 'monday', 'string', 'Day of week when league periods start', 'social'),
     ('league_promotion_threshold', '10', 'integer', 'Top N users promoted to next league', 'social'),
-    ('league_demotion_threshold', '5', 'integer', 'Bottom N users demoted to lower league', 'social');
+    ('league_demotion_threshold', '5', 'integer', 'Bottom N users demoted to lower league', 'social'),
+    ('max_lives', '5', 'integer', 'Maximum number of lives a user can have', 'gamification'),
+    ('life_refill_interval_minutes', '240', 'integer', 'Minutes required to refill one life', 'gamification');
 
 -- ============================================================================
 -- Trigger for automatic timestamp updates
