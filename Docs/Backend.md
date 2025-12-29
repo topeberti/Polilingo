@@ -94,7 +94,7 @@ Retrieve the currently authenticated user.
 
 ---
 
-#### **7. POST /auth/password/reset/request**
+#### **5. POST /auth/password/reset/request**
 
 **Purpose:**
 Initiate password reset flow.
@@ -112,7 +112,7 @@ Initiate password reset flow.
 
 ---
 
-#### **8. POST /auth/password/reset/confirm**
+#### **6. POST /auth/password/reset/confirm**
 
 **Purpose:**
 Complete the password reset process.
@@ -131,7 +131,7 @@ Complete the password reset process.
 
 ---
 
-#### **9. DELETE /auth/user**
+#### **7. DELETE /auth/user**
 
 **Purpose:**
 Delete the authenticated user’s account.
@@ -233,6 +233,40 @@ Delete the authenticated user's profile.
 **Requirements:**
 
 - User must be logged in.
+
+#### **4 GET /users/profile**
+
+**Purpose:**
+Get the authenticated user's profile.
+
+**Requirements:**
+
+- User must be logged in.
+
+**Inputs:**
+
+- user_id: The id of the user.
+
+**Outputs:**
+
+- user: The user profile, which includes information from various tables:
+  - users: The user table, with this fields:
+    - username
+    - email
+    - full_name
+    - profile_picture_url
+    - preferred_study_time
+    - daily_goal
+  - user_gamification_stats: The gamification stats, with this fields:
+    - total_xp
+    - current_level
+    - xp_to_next_level
+    - current_streak
+    - longest_streak
+    - last_streak_date
+    - total_lessons_completed
+    - total_questions_answered
+    - total_correct_answers
 
 ### History
 

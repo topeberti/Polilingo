@@ -40,7 +40,6 @@ CREATE TABLE challenge_templates (
     cooldown_period INTEGER, -- hours, nullable
     
     -- Display and status
-    "order" INTEGER NOT NULL,
     active BOOLEAN NOT NULL DEFAULT true,
     
     -- Timestamps

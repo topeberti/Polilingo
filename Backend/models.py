@@ -147,10 +147,6 @@ class UserGamificationStats(BaseModel):
     last_streak_date: Optional[date] = None
 
 
-    longest_streak: int
-    last_streak_date: Optional[date] = None
-
-
 class UserProfilePublic(BaseModel):
     """Public user profile data strict model for /profile endpoint."""
     username: str

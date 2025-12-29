@@ -64,7 +64,6 @@ export const ChallengeTemplateEdit = () => (
             <NumberInput source="xp_multiplier" label="XP Multiplier" step={0.1} validate={[required()]} />
             <NumberInput source="cooldown_period" label="Cooldown Period (hours)" />
             <BooleanInput source="active" label="Active" />
-            <NumberInput source="order" label="Display Order" />
         </SimpleForm>
     </Edit>
 );
@@ -109,7 +108,6 @@ export const ChallengeTemplateCreate = () => (
             <NumberInput source="xp_multiplier" label="XP Multiplier" defaultValue={1.0} step={0.1} validate={[required()]} />
             <NumberInput source="cooldown_period" label="Cooldown Period (hours)" defaultValue={24} />
             <BooleanInput source="active" label="Active" defaultValue={true} />
-            <NumberInput source="order" label="Display Order" defaultValue={1} />
         </SimpleForm>
     </Create>
 );

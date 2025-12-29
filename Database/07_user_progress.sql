@@ -88,22 +88,6 @@ CREATE TABLE user_gamification_stats (
     current_streak INTEGER NOT NULL DEFAULT 0,
     longest_streak INTEGER NOT NULL DEFAULT 0,
     last_streak_date DATE,
-    streak_freeze_count INTEGER NOT NULL DEFAULT 0,
-    
-    -- Progress stats
-    total_lessons_completed INTEGER NOT NULL DEFAULT 0,
-    total_questions_answered INTEGER NOT NULL DEFAULT 0,
-    total_correct_answers INTEGER NOT NULL DEFAULT 0,
-    accuracy_rate DECIMAL(5,2) NOT NULL DEFAULT 0.0 CHECK (accuracy_rate >= 0 AND accuracy_rate <= 100),
-    
-    -- League info
-    current_league TEXT NOT NULL DEFAULT 'bronze' CHECK (current_league IN ('bronze', 'silver', 'gold', 'diamond', 'obsidian')),
-    league_position INTEGER,
-    league_points_this_week INTEGER NOT NULL DEFAULT 0,
-    
-    -- Challenge records
-    lightning_round_high_score INTEGER NOT NULL DEFAULT 0,
-    perfect_streak_record INTEGER NOT NULL DEFAULT 0,
     
     -- Timestamps
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
