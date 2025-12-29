@@ -267,6 +267,7 @@ Get the authenticated user's profile.
     - total_lessons_completed
     - total_questions_answered
     - total_correct_answers
+    - total_sessions_completed
     - lives: Stored lives count.
     - last_life_lost_at: Timestamp of the last life lost.
     - current_lives: Real-time calculated lives (taking into account refills).

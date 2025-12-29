@@ -145,6 +145,10 @@ class UserGamificationStats(BaseModel):
     current_streak: int
     longest_streak: int
     last_streak_date: Optional[date] = None
+    total_lessons_completed: int = 0
+    total_questions_answered: int = 0
+    total_correct_answers: int = 0
+    total_sessions_completed: int = 0
     lives: int = 5
     last_life_lost_at: datetime
     current_lives: int = 5
