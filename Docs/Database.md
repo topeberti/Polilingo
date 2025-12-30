@@ -583,33 +583,29 @@ Global settings editable by learning expert from dashboard:
 
 For optimal performance, the following indexes should be created:
 
-- Learning Path Tables:
+- **Learning Path Tables**:
+  - Questions: `(concept_id, difficulty, status)`
+  - Questions: `(tags)` (for tag-based filtering)
+  - Sessions: `(lesson_id, "order")`
+  - Sessions: `(block_id)`, `(topic_id)`, `(heading_id)`, `(concept_id)`
+  - Lessons: `("order", status)`
+  - Topics: `(block_id)`
+  - Headings: `(topic_id)`
+  - Concepts: `(heading_id)`
+  - Lesson Prerequisites: `(prerequisite_lesson_id)`
 
-  - Questions: (Concept ID, Difficulty, Status)
-
-  - Questions: (Tags) - for tag-based filtering
-
-  - Sessions: (Lesson ID, Order)
-
-  - Lessons: (Order, Status)
-
-- App Logic Tables:
-
-  - User Session History: (User ID, Session ID, Started at)
-
-  - User Progress: (User ID, Lesson ID, Status)
-
-  - User Lessons History: (User ID, Lesson ID, Started at)
-
-  - Daily Activity Log: (User ID, Activity date)
-
-  - League Participants: (League ID, XP earned this week) - for
-    leaderboard queries
-
-  - Notifications: (User ID, Read at) - for unread counts
-
-  - Friends: (User ID 1, Status), (User ID 2, Status) - for friend
-    lookups
+- **App Logic Tables**:
+  - User Session History: `(user_id, session_id, started_at)`
+  - User Progress: `(lesson_id)`, `(user_id, status)`
+  - User Lessons History: `(user_id, lesson_id, started_at)`
+  - User Questions History: `(user_id)`, `(user_session_history_id)`, `(user_challenges_history_id)`, `(question_id)`
+  - Daily Activity Log: `(user_id, activity_date)` (Unique constraint), `(activity_date)`
+  - League Participants: `(league_id, xp_earned_this_week DESC)` (for leaderboard queries)
+  - Notifications: `(user_id, read_at)` (Partial index for unread), `(user_id, created_at DESC)`
+  - Friends: `(user_id_1, status)`, `(user_id_2, status)`, `(requested_by)`
+  - Friendly Matches: `(challenger_id, status)`, `(opponent_id, status)`, `(session_id)`, `(winner_id)`
+  - User Achievements: `(user_id, unlocked_at DESC)`, `(achievement_id)`
+  - User Challenges History: `(user_id, started_at DESC)`, `(challenge_template_id)`
 
 #### Security Considerations
 

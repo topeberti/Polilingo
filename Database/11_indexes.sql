@@ -17,6 +17,10 @@ CREATE INDEX idx_questions_concept_difficulty_status ON questions(concept_id, di
 -- Sessions: Frequently queried by lesson and order
 CREATE INDEX idx_sessions_lesson_id ON sessions(lesson_id);
 CREATE INDEX idx_sessions_lesson_order ON sessions(lesson_id, "order");
+CREATE INDEX idx_sessions_block_id ON sessions(block_id);
+CREATE INDEX idx_sessions_topic_id ON sessions(topic_id);
+CREATE INDEX idx_sessions_heading_id ON sessions(heading_id);
+CREATE INDEX idx_sessions_concept_id ON sessions(concept_id);
 
 -- Lessons: Frequently queried by order and status
 CREATE INDEX idx_lessons_order ON lessons("order");
@@ -49,12 +53,10 @@ CREATE INDEX idx_user_questions_history_question_id ON user_questions_history(qu
 
 
 -- User Progress: Frequently queried by user and status
-CREATE INDEX idx_user_progress_user_id ON user_progress(user_id);
 CREATE INDEX idx_user_progress_lesson_id ON user_progress(lesson_id);
 CREATE INDEX idx_user_progress_user_status ON user_progress(user_id, status);
 
 -- Daily Activity Log: Frequently queried by user and date
-CREATE INDEX idx_daily_activity_user_id ON daily_activity_log(user_id);
 CREATE INDEX idx_daily_activity_user_date ON daily_activity_log(user_id, activity_date DESC);
 CREATE INDEX idx_daily_activity_date ON daily_activity_log(activity_date);
 
@@ -73,6 +75,7 @@ CREATE INDEX idx_leagues_dates ON leagues(start_date, end_date);
 
 -- User Achievements: Frequently queried by user
 CREATE INDEX idx_user_achievements_user_id ON user_achievements(user_id);
+CREATE INDEX idx_user_achievements_achievement_id ON user_achievements(achievement_id);
 CREATE INDEX idx_user_achievements_unlocked ON user_achievements(user_id, unlocked_at DESC);
 
 -- Achievements: Frequently queried by type and active status
@@ -86,11 +89,14 @@ CREATE INDEX idx_achievements_active ON achievements(active);
 -- Friends: Frequently queried by both user IDs and status
 CREATE INDEX idx_friends_user_id_1 ON friends(user_id_1, status);
 CREATE INDEX idx_friends_user_id_2 ON friends(user_id_2, status);
+CREATE INDEX idx_friends_requested_by ON friends(requested_by);
 CREATE INDEX idx_friends_status ON friends(status);
 
 -- Friendly Matches: Frequently queried by both users and status
 CREATE INDEX idx_friendly_matches_challenger ON friendly_matches(challenger_id, status);
 CREATE INDEX idx_friendly_matches_opponent ON friendly_matches(opponent_id, status);
+CREATE INDEX idx_friendly_matches_session_id ON friendly_matches(session_id);
+CREATE INDEX idx_friendly_matches_winner_id ON friendly_matches(winner_id);
 CREATE INDEX idx_friendly_matches_status ON friendly_matches(status);
 CREATE INDEX idx_friendly_matches_created ON friendly_matches(created_at DESC);
 
