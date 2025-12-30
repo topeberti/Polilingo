@@ -364,77 +364,60 @@ async def get_available_sessions(
         target_user_id = user_id or current_user.id
         token = credentials.credentials
         
-        # 1. Get IDs of sessions the user has passed
+        # 1. Get IDs of sessions the user has passed (Call 1)
         history_response = supabase.postgrest.auth(token).from_("user_session_history") \
             .select("session_id") \
             .eq("user_id", str(target_user_id)) \
             .eq("passed", True) \
             .execute()
         
-        passed_ids = [item['session_id'] for item in history_response.data] if history_response.data else []
+        passed_ids = list(set(item['session_id'] for item in history_response.data)) if history_response.data else []
         
-        # 2. Fetch all sessions with lesson info to determine the next one and global sequence
+        # 2. Fetch ALL sessions with their lesson info (Call 2)
+        # This gives us everything we need for sequencing and display
         all_sessions_response = supabase.postgrest.auth(token).from_("sessions") \
-            .select("*, lessons!inner(order)") \
+            .select("*, lessons!inner(*)") \
             .execute()
             
         if not all_sessions_response.data:
-            return AvailableSessionsResponse(sessions=[], lessons=[])
+            return AvailableSessionsResponse(sessions=[], lessons=[], passed_session_ids=[])
             
-        # 3. Sort sessions by lesson order then session order
-        sorted_all_sessions = sorted(
+        # 3. Sort all sessions by lesson order then session order to determine sequence
+        all_sessions = sorted(
             all_sessions_response.data,
             key=lambda x: (x['lessons']['order'], x['order'])
         )
         
         # 4. Find the first session that has not been passed
         next_session_id = None
-        for s in sorted_all_sessions:
+        for s in all_sessions:
             if s['id'] not in passed_ids:
                 next_session_id = s['id']
                 break
 
-        # 3. Combine IDs
-        available_ids = passed_ids
-        if next_session_id and next_session_id not in available_ids:
-            available_ids.append(next_session_id)
+        # 5. Determine available sessions (passed + next)
+        available_ids = set(passed_ids)
+        if next_session_id:
+            available_ids.add(next_session_id)
             
-        if not available_ids:
-            return AvailableSessionsResponse(sessions=[], lessons=[])
-            
-        # 4. Fetch full session data
-        sessions_response = supabase.postgrest.auth(token).from_("sessions") \
-            .select("*") \
-            .in_("id", available_ids) \
-            .execute()
+        # 6. Filter all_sessions to only include available ones and prepare lessons list
+        available_sessions_data = []
+        lessons_map = {}
         
-        sessions_data = sessions_response.data
-        lesson_ids = list(set(s['lesson_id'] for s in sessions_data))
-        
-        # 5. Fetch full lesson data
-        lessons_response = supabase.postgrest.auth(token).from_("lessons") \
-            .select("*") \
-            .in_("id", lesson_ids) \
-            .execute()
-        
-        lessons_data = lessons_response.data
-        
-        # Create lookup maps for sorting
-        lessons_map = {l['id']: l for l in lessons_data}
-        
-        # 6. Sort sessions by lesson order then session order
-        def sort_key(s):
-            lesson_order = lessons_map.get(s['lesson_id'], {}).get('order', 999999)
-            return (lesson_order, s['order'])
-            
-        sessions_data.sort(key=sort_key)
+        for s in all_sessions:
+            if s['id'] in available_ids:
+                # Extract lesson data for the lessons list
+                lesson_data = s.pop('lessons')
+                lessons_map[lesson_data['id']] = lesson_data
+                available_sessions_data.append(s)
         
         # Sort lessons by order
-        lessons_data.sort(key=lambda x: x['order'])
+        sorted_lessons = sorted(lessons_map.values(), key=lambda x: x['order'])
         
         return AvailableSessionsResponse(
-            sessions=[Session(**s) for s in sessions_data],
-            lessons=[Lesson(**l) for l in lessons_data]
+            sessions=[Session(**s) for s in available_sessions_data],
+            lessons=[Lesson(**l) for l in sorted_lessons],
+            passed_session_ids=passed_ids
         )
 
     except HTTPException:

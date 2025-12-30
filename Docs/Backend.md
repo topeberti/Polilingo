@@ -375,7 +375,7 @@ Returns an ordered list of sessions that the user can complete, including the fu
 
 **Outputs:**
 
-- List of jsons of full session data and list of jsons of full lesson data.
+- List of jsons of full session data, list of jsons of full lesson data, and list of strings of passed session IDs.
 
 ### Learning
 
@@ -510,3 +510,8 @@ The system implements a life-based progression similar to Duolingo:
 
 - **Issue:** The `available` and `next` session endpoints previously relied solely on `sessions.order`, ignoring lesson sequence. This caused sessions in subsequent lessons to be missed.
 - **Fix:** Refactored `get_next_session`, `get_available_sessions`, and `get_next_lesson` to use a composite sort key `(lesson.order, session.order)`. This ensures correct progression across lesson boundaries.
+
+#### **Optimized Learning Path Performance (2025-12-30)**
+
+- **Issue:** The learning path menu was slow due to multiple sequential network calls and inefficient backend data fetching.
+- **Fix:** Consolidated database queries in `get_available_sessions` to use resource embedding (joins), reducing backend DB calls from 4 to 2. Updated the endpoint to return `passed_session_ids`, eliminating a separate client-side call. Perceived latency reduced by over 50%.

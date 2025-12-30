@@ -17,13 +17,10 @@ def get_available_sessions(token):
         
         sessions = data.get("sessions", [])
         lessons = data.get("lessons", [])
+        passed_session_ids = set(data.get("passed_session_ids", []))
         
         # Create a dictionary of lessons for easy lookup
         lessons_dict = {lesson["id"]: lesson for lesson in lessons}
-        
-        # Get passed sessions from the backend
-        passed_sessions = get_passed_sessions(token)
-        passed_session_ids = set(session["id"] for session in passed_sessions)
         
         return sessions, lessons_dict, passed_session_ids
     

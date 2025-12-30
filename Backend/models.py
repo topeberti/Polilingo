@@ -283,6 +283,7 @@ class AvailableSessionsResponse(BaseModel):
     """Response model for available sessions, including sessions and their lessons."""
     sessions: List[Session]
     lessons: List[Lesson]
+    passed_session_ids: List[str] = Field(default_factory=list)
 
 
 # Learning Models
