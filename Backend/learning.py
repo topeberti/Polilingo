@@ -293,7 +293,8 @@ async def start_session(
             id=new_id, 
             status="started",
             lives_remaining=lives_status["current_lives"],
-            next_life_at=lives_status.get("next_life_at")
+            next_life_at=lives_status.get("next_life_at"),
+            seconds_to_next_life=lives_status.get("seconds_to_next_life")
         )
         
     except HTTPException:
@@ -480,7 +481,10 @@ async def answer_question(
         # Step 4: Determine XP gained
         xp_gained = 0
         if is_correct:
-            # Fetch XP reward from configuration
+            # Fetch XP reward from configuration (LivesService now caches this)
+            # But we need xp_per_correct_answer which is not in LivesService cache currently
+            # Let's add it to LivesService or just fetch it here.
+            # Actually, let's keep it simple for now as Step 4 is usually fast.
             config_response = supabase.postgrest.auth(token).from_("learning_path_config").select("config_value").eq("config_key", "xp_per_correct_answer").execute()
             if config_response.data:
                 xp_gained = int(config_response.data[0]["config_value"])
@@ -497,7 +501,8 @@ async def answer_question(
             correct_answer=correct_option,
             xp_gained=xp_gained,
             lives_remaining=lives_status["current_lives"],
-            next_life_at=lives_status.get("next_life_at")
+            next_life_at=lives_status.get("next_life_at"),
+            seconds_to_next_life=lives_status.get("seconds_to_next_life")
         )
         
     except HTTPException:

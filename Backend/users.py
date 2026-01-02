@@ -245,27 +245,31 @@ async def get_user_profile(
     try:
         token = credentials.credentials
         
-        # Fetch user profile data using authenticated client for RLS
-        user_response = supabase.postgrest.auth(token).from_("users").select("*").eq("id", current_user.id).execute()
+        # Aggregated Query: Fetch user profile data and gamification stats in ONE call
+        # Using Supabase Resource Embedding (Join)
+        # We use .execute() instead of .single() to avoid Postgrest errors when record is missing
+        response = supabase.postgrest.auth(token).from_("users")\
+            .select("*, user_gamification_stats(*)")\
+            .eq("id", current_user.id)\
+            .execute()
         
-        if not user_response.data:
+        if not response.data or len(response.data) == 0:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="User profile data not found"
             )
             
-        user_data = user_response.data[0]
+        user_data = response.data[0]
+        stats_data_raw = user_data.get("user_gamification_stats")
         
-        # Fetch gamification stats using authenticated client for RLS
-        stats_response = supabase.postgrest.auth(token).from_("user_gamification_stats").select("*").eq("user_id", current_user.id).execute()
-        
-        # Handle missing stats (shouldn't happen for active users, but safe to handle)
+        # Handle gamification stats (could be list or dict depending on previous query)
         gamification_stats = None
-        if stats_response.data:
-            # Fetch real-time lives status
+        if stats_data_raw:
+            stats_data = stats_data_raw[0] if isinstance(stats_data_raw, list) else stats_data_raw
+            
+            # Fetch real-time lives status, passing pre-fetched stats to avoid a second DB call
             lives_service = LivesService(supabase, token)
-            lives_status = await lives_service.get_current_lives(current_user.id)
-            stats_data = stats_response.data[0]
+            lives_status = await lives_service.get_current_lives(current_user.id, stats_data=stats_data)
             
             gamification_stats = UserGamificationStats(
                 total_xp=stats_data.get("total_xp", 0),
@@ -274,21 +278,25 @@ async def get_user_profile(
                 current_streak=stats_data.get("current_streak", 0),
                 longest_streak=stats_data.get("longest_streak", 0),
                 last_streak_date=stats_data.get("last_streak_date"),
+                total_lessons_completed=stats_data.get("total_lessons_completed", 0),
+                total_questions_answered=stats_data.get("total_questions_answered", 0),
+                total_correct_answers=stats_data.get("total_correct_answers", 0),
+                total_sessions_completed=stats_data.get("total_sessions_completed", 0),
                 lives=stats_data.get("lives", 5),
-                last_life_lost_at=stats_data.get("last_life_lost_at", stats_data.get("updated_at")),
+                last_life_lost_at=stats_data.get("last_life_lost_at", user_data.get("updated_at")),
                 current_lives=lives_status["current_lives"],
-                next_life_at=lives_status.get("next_life_at")
+                next_life_at=lives_status.get("next_life_at"),
+                seconds_to_next_life=lives_status.get("seconds_to_next_life")
             )
-            
             
         # Convert user data to pydantic model (Strict public response)
         user_profile = UserProfilePublic(
-            username=user_data["username"],
-            email=user_data["email"],
+            username=user_data.get("username", "Unknown"),
+            email=user_data.get("email", ""),
             full_name=user_data.get("full_name", ""),
             profile_picture_url=user_data.get("profile_picture_url"),
             preferred_study_time=user_data.get("preferred_study_time"),
-            daily_goal=user_data.get("daily_goal", 5)
+            daily_goal=user_data.get("daily_goal", 50)
         )
         
         return UserProfileResponse(
@@ -302,7 +310,7 @@ async def get_user_profile(
         logger.error(f"Error fetching user profile: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to fetch user profile"
+            detail=f"Failed to fetch user profile: {str(e)}"
         )
 
 

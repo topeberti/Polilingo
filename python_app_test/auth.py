@@ -83,13 +83,22 @@ def signup():
                 print(f"Status Code: {e.response.status_code}")
         return False
 
-def save_session(access_token, refresh_token):
-    """Saves the bearer and refresh tokens to a local file."""
+def save_session(access_token, refresh_token, profile_created=None):
+    """Saves the bearer and refresh tokens to a local file, along with profile status."""
     try:
+        # Preserve existing profile_created if not provided
+        if profile_created is None:
+            existing = load_session()
+            if existing:
+                profile_created = existing.get("profile_created", False)
+            else:
+                profile_created = False
+
         with open(SESSION_FILE, "w") as f:
             json.dump({
                 "access_token": access_token,
-                "refresh_token": refresh_token
+                "refresh_token": refresh_token,
+                "profile_created": profile_created
             }, f)
     except Exception as e:
         print(f"Error saving session: {e}")

@@ -153,6 +153,7 @@ class UserGamificationStats(BaseModel):
     last_life_lost_at: datetime
     current_lives: int = 5
     next_life_at: Optional[datetime] = None
+    seconds_to_next_life: Optional[int] = None
 
 
 class UserProfilePublic(BaseModel):
@@ -313,6 +314,7 @@ class StartSessionResponse(BaseModel):
     status: str = Field("started", description="The status of the session")
     lives_remaining: int = Field(5, description="The number of lives the user has left")
     next_life_at: Optional[datetime] = Field(None, description="The time when the next life will be refilled")
+    seconds_to_next_life: Optional[int] = Field(None, description="Seconds remaining until the next life refill")
 
 
 
@@ -339,4 +341,5 @@ class AnswerQuestionResponse(BaseModel):
     xp_gained: int = Field(0, description="The amount of XP gained for this answer")
     lives_remaining: int = Field(5, description="The number of lives the user has left")
     next_life_at: Optional[datetime] = Field(None, description="The time when the next life will be refilled")
+    seconds_to_next_life: Optional[int] = Field(None, description="Seconds remaining until the next life refill")
 
