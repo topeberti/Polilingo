@@ -134,6 +134,23 @@ class AuthProvider extends ChangeNotifier {
     return false;
   }
 
+  Future<bool> requestPasswordReset(String email) async {
+    try {
+      final response = await _apiClient.post(
+        '/auth/password/reset/request',
+        body: {'email': email},
+      );
+
+      // Backend always returns 200 to prevent user enumeration
+      if (response.statusCode == 200) {
+        return true;
+      }
+    } catch (e) {
+      debugPrint('Password reset request error: $e');
+    }
+    return false;
+  }
+
   Future<void> logout() async {
     await _apiClient.clearToken();
     final prefs = await SharedPreferences.getInstance();

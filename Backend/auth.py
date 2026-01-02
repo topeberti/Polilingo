@@ -5,11 +5,11 @@ Integrates with Supabase Auth for user management.
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import HTMLResponse
-from supabase import Client
+from supabase import Client, create_client
 from gotrue.errors import AuthApiError
 import logging
 
-from config import get_supabase
+from config import get_supabase, settings
 from models import (
     SignupRequest, SignupResponse,
     LoginRequest, LoginResponse,
@@ -28,11 +28,14 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 
-@router.get("/verify", response_class=HTMLResponse)
-async def verify_email_success():
+@router.get("/verify-success", response_class=HTMLResponse)
+async def verify_success():
     """
     Landing page for successful email verification.
     """
+    # ... (redirect to the newer one or just use the same content)
+    # Actually, let's keep it simple and just have ONE verify-success endpoint
+    # I'll point both to the same logic later
     html_content = """
     <!DOCTYPE html>
     <html lang="en">
@@ -163,12 +166,17 @@ async def signup(
     Triggers email verification. User cannot login until email is verified.
     """
     try:
+        # Determine the redirect URL for the confirmation email
+        # We always want them to go to our unified handler
+        redirect_to = "http://localhost:8000/auth/confirm"
+        
         # Sign up user with Supabase
         response = supabase.auth.sign_up({
             "email": request.email,
             "password": request.password,
             "options": {
-                "data": request.metadata or {}
+                "data": request.metadata or {},
+                "email_redirect_to": redirect_to
             }
         })
         
@@ -397,8 +405,13 @@ async def request_password_reset(
     If the email exists, a reset link will be sent.
     """
     try:
-        # Request password reset from Supabase
-        supabase.auth.reset_password_email(request.email)
+        # Request password reset from Supabase with redirect to our handler
+        redirect_url = "http://localhost:8000/auth/confirm"
+        # In a real app, this would come from settings or a param
+        supabase.auth.reset_password_for_email(
+            request.email, 
+            options={"redirect_to": redirect_url}
+        )
         
         # Always return success to prevent user enumeration
         return PasswordResetResponse(
@@ -413,6 +426,195 @@ async def request_password_reset(
         )
 
 
+@router.get("/confirm", response_class=HTMLResponse)
+async def auth_confirm():
+    """
+    Unified authentication handler.
+    Routes to appropriate flow based on type parameter in URL fragment.
+    Handles both email verification (type=signup) and password reset (type=recovery).
+    """
+    try:
+        with open("templates/auth_confirm.html", "r", encoding="utf-8") as f:
+            html_content = f.read()
+        return HTMLResponse(content=html_content)
+    except Exception as e:
+        logger.error(f"Error loading auth confirm page: {str(e)}")
+        return HTMLResponse(
+            content="<h1>Error</h1><p>Could not load authentication page.</p>",
+            status_code=500
+        )
+
+
+@router.post("/verify-email")
+async def verify_email(
+    request: dict,
+    supabase: Client = Depends(get_supabase)
+):
+    """
+    Verify user email with access token from confirmation link.
+    Called by the unified auth handler when type=signup.
+    """
+    try:
+        access_token = request.get("access_token")
+        refresh_token = request.get("refresh_token")
+        
+        if not access_token:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Missing access token"
+            )
+        
+        # Set the session to verify the email
+        # This marks the user's email as verified in Supabase
+        supabase.auth.set_session(access_token, refresh_token or access_token)
+        
+        # Get user to confirm email is verified
+        user_response = supabase.auth.get_user(access_token)
+        
+        if not user_response.user or not user_response.user.email_confirmed_at:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email verification failed"
+            )
+        
+        return {
+            "message": "Email verified successfully",
+            "user_id": user_response.user.id
+        }
+        
+    except AuthApiError as e:
+        logger.error(f"Email verification error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired verification link"
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Unexpected email verification error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred during email verification"
+        )
+
+
+@router.get("/password/reset", response_class=HTMLResponse)
+async def password_reset_form():
+    """
+    Serve the password reset form page.
+    
+    Users land here from the email link with a token parameter.
+    """
+    try:
+        with open("templates/password_reset_form.html", "r", encoding="utf-8") as f:
+            html_content = f.read()
+        return HTMLResponse(content=html_content)
+    except Exception as e:
+        logger.error(f"Error loading password reset form: {str(e)}")
+        return HTMLResponse(
+            content="<h1>Error</h1><p>Could not load password reset form.</p>",
+            status_code=500
+        )
+
+
+@router.get("/reset-success", response_class=HTMLResponse)
+async def reset_success():
+    """
+    Landing page for successful password reset.
+    """
+    html_content = """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Password Reset Successful - Polilingo</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+            }
+            .container {
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
+                border-radius: 16px;
+                padding: 40px;
+                max-width: 450px;
+                width: 100%;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                text-align: center;
+            }
+            .logo {
+                font-size: 36px;
+                font-weight: 700;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                margin-bottom: 24px;
+            }
+            .icon {
+                width: 80px;
+                height: 80px;
+                background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 20px;
+            }
+            .checkmark {
+                width: 40px;
+                height: 40px;
+                border: 4px solid white;
+                border-top: none;
+                border-right: none;
+                transform: rotate(-45deg);
+                margin-top: 10px;
+            }
+            h1 {
+                color: #1a1a1a;
+                font-size: 28px;
+                margin-bottom: 12px;
+            }
+            p {
+                color: #6b6b6b;
+                line-height: 1.6;
+                margin-bottom: 24px;
+            }
+            .footer {
+                margin-top: 20px;
+                font-size: 12px;
+                color: #999;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="logo">Polilingo</div>
+            <div class="icon">
+                <div class="checkmark"></div>
+            </div>
+            <h1>Password Reset Successful!</h1>
+            <p>Your password has been successfully changed. You can now log in to Polilingo with your new password.</p>
+            <div class="footer">© 2026 Polilingo</div>
+        </div>
+    </body>
+    </html>
+    """
+    return HTMLResponse(content=html_content)
+
+
 @router.post("/password/reset/confirm", response_model=PasswordResetConfirmResponse)
 async def confirm_password_reset(
     request: PasswordResetConfirm,
@@ -421,33 +623,72 @@ async def confirm_password_reset(
     """
     Complete the password reset process.
     
-    - **access_token**: Reset token from the email link
+    - **access_token**: Reset token or session access token from the email link
     - **new_password**: New password (minimum 6 characters)
     
     Sets the new password and confirms the reset.
     """
     try:
-        # Update password using the reset token
-        response = supabase.auth.update_user({
-            "password": request.new_password
-        })
+        import httpx
         
-        if not response.user:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Invalid or expired reset token"
+        final_access_token = request.access_token
+        
+        # Determine if the token is a JWT (typically 3 parts separated by dots)
+        is_jwt = len(request.access_token.split('.')) == 3
+        
+        if not is_jwt:
+            # It's likely a token_hash or OTP, we need to exchange it for a session
+            try:
+                verify_response = supabase.auth.verify_otp({
+                    "token_hash": request.access_token,
+                    "type": "recovery"
+                })
+                
+                if not verify_response.session:
+                    raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST,
+                        detail="Invalid or expired reset token"
+                    )
+                final_access_token = verify_response.session.access_token
+            except AuthApiError as e:
+                logger.error(f"Token verification failed: {str(e)}")
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Invalid or expired reset token"
+                )
+        
+        # Now use the access token (either provided or verified) to update the password
+        headers = {
+            "apikey": settings.supabase_key,
+            "Authorization": f"Bearer {final_access_token}",
+            "Content-Type": "application/json"
+        }
+        
+        # Update the password using the authenticated session
+        async with httpx.AsyncClient() as client:
+            response = await client.put(
+                f"{settings.supabase_url}/auth/v1/user",
+                headers=headers,
+                json={"password": request.new_password}
             )
+            
+            if response.status_code != 200:
+                logger.error(f"Password update failed: {response.text}")
+                # If it's a 401/403, the session itself might be invalid
+                if response.status_code in [401, 403]:
+                    raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST,
+                        detail="Session expired or invalid. Please request a new reset link."
+                    )
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Failed to update password"
+                )
         
         return PasswordResetConfirmResponse(
             message="Password reset successful. You can now log in with your new password."
         )
         
-    except AuthApiError as e:
-        logger.error(f"Password reset confirmation error: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid or expired reset token"
-        )
     except HTTPException:
         raise
     except Exception as e:
@@ -456,7 +697,6 @@ async def confirm_password_reset(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An unexpected error occurred during password reset"
         )
-
 
 @router.delete("/user", response_model=DeleteUserResponse)
 async def delete_user(

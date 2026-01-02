@@ -6,6 +6,7 @@ import 'providers/learning_provider.dart';
 import 'ui/screens/welcome_screen.dart';
 import 'ui/screens/login_screen.dart';
 import 'ui/screens/signup_screen.dart';
+import 'ui/screens/forgot_password_screen.dart';
 import 'ui/screens/profile_setup_screen.dart';
 import 'ui/screens/dashboard_screen.dart';
 
@@ -35,6 +36,7 @@ class PolilingoApp extends StatelessWidget {
         '/welcome': (context) => const WelcomeScreen(),
         '/login': (context) => const LoginScreen(),
         '/signup': (context) => const SignupScreen(),
+        '/forgot-password': (context) => const ForgotPasswordScreen(),
         '/profile-setup': (context) => const ProfileSetupScreen(),
         '/dashboard': (context) => const DashboardScreen(),
       },
