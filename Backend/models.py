@@ -114,7 +114,7 @@ class ErrorResponse(BaseModel):
 class CreateUserRequest(BaseModel):
     """Request model for creating a user profile."""
     username: str = Field(..., min_length=3, max_length=20, description="Unique username")
-    full_name: str = Field(..., min_length=1, description="User's full name")
+    full_name: Optional[str] = Field(None, description="User's full name")
     profile_picture_url: Optional[str] = Field(None, description="URL to profile picture")
     preferred_study_time: Optional[Time] = Field(None, description="Preferred study time (HH:MM)")
     daily_goal: Optional[int] = Field(None, ge=1, description="Daily XP goal")
@@ -160,7 +160,7 @@ class UserProfilePublic(BaseModel):
     """Public user profile data strict model for /profile endpoint."""
     username: str
     email: str
-    full_name: str
+    full_name: Optional[str] = None
     profile_picture_url: Optional[str] = None
     preferred_study_time: Optional[Time] = None
     daily_goal: int

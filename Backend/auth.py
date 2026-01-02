@@ -4,6 +4,7 @@ Integrates with Supabase Auth for user management.
 """
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import HTMLResponse
 from supabase import Client
 from gotrue.errors import AuthApiError
 import logging
@@ -25,6 +26,126 @@ from middleware import get_current_user, get_current_user_token
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
+
+
+@router.get("/verify", response_class=HTMLResponse)
+async def verify_email_success():
+    """
+    Landing page for successful email verification.
+    """
+    html_content = """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Email Verified | Polilingo</title>
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+        <style>
+            :root {
+                --primary: #4F46E5;
+                --primary-dark: #4338CA;
+                --bg: #0F172A;
+                --text: #F8FAFC;
+                --text-muted: #94A3B8;
+                --card-bg: #1E293B;
+            }
+            body {
+                margin: 0;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+                background-color: var(--bg);
+                font-family: 'Outfit', sans-serif;
+                color: var(--text);
+                text-align: center;
+            }
+            .container {
+                max-width: 450px;
+                padding: 2.5rem;
+                background: var(--card-bg);
+                border-radius: 24px;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+                border: 1px solid rgba(255, 255, 255, 0.05);
+                backdrop-filter: blur(10px);
+                animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .icon-wrapper {
+                width: 80px;
+                height: 80px;
+                background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 1.5rem;
+                box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+            }
+            .icon-wrapper svg {
+                width: 40px;
+                height: 40px;
+                color: white;
+            }
+            h1 {
+                font-size: 2rem;
+                font-weight: 800;
+                margin-bottom: 0.5rem;
+                background: linear-gradient(to bottom right, #fff, #94a3b8);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+            p {
+                color: var(--text-muted);
+                line-height: 1.6;
+                margin-bottom: 2rem;
+            }
+            .btn {
+                display: inline-block;
+                background-color: var(--primary);
+                color: white;
+                padding: 0.8rem 2rem;
+                border-radius: 12px;
+                text-decoration: none;
+                font-weight: 600;
+                transition: all 0.2s ease;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            }
+            .btn:hover {
+                background-color: var(--primary-dark);
+                transform: translateY(-2px);
+                box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4);
+            }
+            .footer {
+                margin-top: 2rem;
+                font-size: 0.875rem;
+                color: var(--text-muted);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="icon-wrapper">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
+            <h1>Email Verified!</h1>
+            <p>Your email has been successfully verified. You can now return to the app and continue your learning journey.</p>
+            <a href="polilingo://open" class="btn">Open Polilingo</a>
+            <div class="footer">
+                Polilingo &copy; 2026
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    return HTMLResponse(content=html_content)
 
 
 @router.post("/signup", response_model=SignupResponse, status_code=status.HTTP_201_CREATED)
