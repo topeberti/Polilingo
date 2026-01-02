@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
 import '../../providers/auth_provider.dart';
+import '../../core/utils/validation_utils.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -16,10 +17,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   bool _emailSent = false;
 
   void _handlePasswordReset() async {
-    if (_emailController.text.isEmpty) {
+    if (!ValidationUtils.isValidEmail(_emailController.text)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please enter your email address.'),
+          content: Text('Please enter a valid email address'),
           backgroundColor: Colors.red,
         ),
       );
