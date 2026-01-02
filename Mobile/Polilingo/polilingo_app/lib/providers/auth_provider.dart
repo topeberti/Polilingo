@@ -92,16 +92,26 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> checkProfile() async {
     try {
+      debugPrint('🔍 Checking profile...');
       final response = await _apiClient.get('/users/profile');
+      debugPrint('📊 Profile check response: ${response.statusCode}');
+
       if (response.statusCode == 200) {
         _userProfile = jsonDecode(response.body);
         _status = AuthStatus.authenticated;
+        debugPrint('✅ Profile exists: ${_userProfile?['username']}');
       } else if (response.statusCode == 404) {
+        _userProfile = null;
         _status = AuthStatus.profileMissing;
+        debugPrint('❌ Profile missing - showing setup screen');
       } else {
+        _userProfile = null;
         _status = AuthStatus.unauthenticated;
+        debugPrint('⚠️ Unexpected status: ${response.statusCode}');
       }
     } catch (e) {
+      debugPrint('❌ Profile check error: $e');
+      _userProfile = null;
       _status = AuthStatus.unauthenticated;
     }
     notifyListeners();

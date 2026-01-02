@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Polilingo Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1a227f",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#121320",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #121320; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #282a43; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #1a227f; 
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-input {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .glass-input:focus-within {
+            background: rgba(0, 0, 0, 0.3);
+            border-color: rgba(26, 34, 127, 0.5);
+            box-shadow: 0 0 15px rgba(26, 34, 127, 0.3);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-white selection:bg-primary selection:text-white overflow-x-hidden">
+<div class="relative min-h-screen w-full flex flex-col justify-center items-center p-4">
+<!-- Background Effects -->
+<div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+<!-- Gradient Orb 1 -->
+<div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary/40 rounded-full blur-[100px] mix-blend-screen opacity-60 animate-pulse"></div>
+<!-- Gradient Orb 2 -->
+<div class="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-cyan-600/20 rounded-full blur-[80px] mix-blend-screen opacity-50"></div>
+<!-- Background Texture -->
+<div class="absolute inset-0 bg-[url('https://placeholder.pics/svg/300')] bg-cover bg-center opacity-5 mix-blend-overlay" data-alt="Abstract subtle geometric pattern texture"></div>
+</div>
+<!-- Main Content -->
+<div class="relative z-10 w-full max-w-[420px] flex flex-col gap-6">
+<!-- Header Section -->
+<div class="flex flex-col items-center justify-center text-center space-y-2 pt-8 pb-2">
+<!-- Logo Mark -->
+<div class="w-16 h-16 bg-gradient-to-tr from-primary to-cyan-500 rounded-2xl flex items-center justify-center shadow-[0_0_20px_rgba(26,34,127,0.5)] mb-2">
+<span class="material-symbols-outlined text-3xl text-white">local_police</span>
+</div>
+<!-- Headline -->
+<div>
+<h1 class="text-3xl font-bold tracking-tight text-white drop-shadow-sm">Polilingo</h1>
+<p class="text-slate-400 text-sm font-medium tracking-wide uppercase mt-1">Prepare to Serve</p>
+</div>
+</div>
+<!-- Glass Card Form -->
+<div class="glass-panel rounded-3xl p-6 md:p-8 shadow-2xl flex flex-col gap-6 w-full animate-[fadeIn_0.5s_ease-out]">
+<!-- Segmented Control (Tabs) -->
+<div class="flex p-1 bg-black/30 rounded-xl relative">
+<label class="flex-1 relative cursor-pointer group">
+<input checked="" class="peer sr-only" name="auth_type" type="radio" value="login"/>
+<div class="py-2.5 text-center text-sm font-semibold text-slate-400 rounded-lg transition-all duration-300 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-lg peer-checked:shadow-primary/30">
+                            Login
+                        </div>
+</label>
+<label class="flex-1 relative cursor-pointer group">
+<input class="peer sr-only" name="auth_type" type="radio" value="signup"/>
+<div class="py-2.5 text-center text-sm font-semibold text-slate-400 rounded-lg transition-all duration-300 peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-lg peer-checked:shadow-primary/30">
+                            Sign Up
+                        </div>
+</label>
+</div>
+<!-- Input Fields -->
+<div class="space-y-4">
+<!-- Email Field -->
+<div class="group">
+<label class="block text-xs font-medium text-slate-300 mb-1.5 ml-1">Email Address</label>
+<div class="glass-input flex items-center rounded-xl overflow-hidden transition-all duration-300 h-12">
+<span class="pl-4 pr-2 text-slate-400 flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">mail</span>
+</span>
+<input class="w-full bg-transparent border-none text-white placeholder-slate-500 focus:ring-0 text-sm py-2 px-2" placeholder="cadet@police.es" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="group">
+<div class="flex justify-between items-center mb-1.5 ml-1">
+<label class="block text-xs font-medium text-slate-300">Password</label>
+</div>
+<div class="glass-input flex items-center rounded-xl overflow-hidden transition-all duration-300 h-12">
+<span class="pl-4 pr-2 text-slate-400 flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">lock</span>
+</span>
+<input class="w-full bg-transparent border-none text-white placeholder-slate-500 focus:ring-0 text-sm py-2 px-2" placeholder="••••••••" type="password"/>
+<button class="pr-4 pl-2 text-slate-400 hover:text-white transition-colors focus:outline-none flex items-center">
+<span class="material-symbols-outlined text-[20px]">visibility_off</span>
+</button>
+</div>
+<div class="flex justify-end mt-2">
+<a class="text-xs font-medium text-cyan-400 hover:text-cyan-300 transition-colors" href="#">Forgot Password?</a>
+</div>
+</div>
+</div>
+<!-- Primary Action Button -->
+<button class="w-full bg-gradient-to-r from-primary to-[#2a349f] hover:to-[#3b46bf] text-white font-bold py-3.5 px-4 rounded-xl shadow-[0_4px_20px_rgba(26,34,127,0.4)] hover:shadow-[0_6px_25px_rgba(26,34,127,0.6)] transform transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 text-sm uppercase tracking-wide flex items-center justify-center gap-2">
+<span>Resume Mission</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+<!-- Social Login Section -->
+<div class="relative flex py-1 items-center">
+<div class="flex-grow border-t border-slate-700"></div>
+<span class="flex-shrink-0 mx-4 text-xs font-medium text-slate-500">Or continue with</span>
+<div class="flex-grow border-t border-slate-700"></div>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<button class="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl py-2.5 transition-colors group">
+<div class="w-5 h-5 bg-contain bg-no-repeat bg-center" data-alt="Google Logo" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBfvEgy9hjLMGmRuwx_vvpHp79Fzjj7Eyjn7a7UHDvNhJZwTnUxzSaJ9KwxprOTgu3iugPISrwjs4JuOAnxeocBKIMEqdyA4oWIrn_1RiQ6WMvdn978e43gccuQAnIdrDJO-mh6JI0fn1g0sFPUNJ77aSZv-SG2kSbwFI0DGTb0lIHKGvue_dRyaGiPhWA9kUDao-CgFL--GKjn9FVm1O2_2rin8aJnEJlIsYQ59kHygxkdWHHexDPYVs68A1RuM-1iHSbjBNdndlzB");'></div>
+<span class="text-sm font-medium text-slate-200 group-hover:text-white">Google</span>
+</button>
+<button class="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl py-2.5 transition-colors group">
+<div class="w-5 h-5 bg-contain bg-no-repeat bg-center invert" data-alt="Apple Logo" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCUwR_BXNaZ6tc86aZIqnSemZIt6Jo42F9MkwXgbqFw9QJML-KlO1TcRDzYk6i3kps4GakT-o51oMhkAlwEfNkUMKfnTsK-BQSi5r4E2EroBC_eAbUTMPn7STOETNP3rNeCN4GC3-Z2Eq--TSsTFYg6Ct94OnTzMUSnFnurFBXEFzODOg8XLKtlChyHr1bo2QfmzUrk97-hBcQlU1IkDU_sRxKOs-y8fmZWRYgSwVk5Rd34i9HmvMnwhu6xMeWd9mDNJntR7IgQdHY3");'></div>
+<span class="text-sm font-medium text-slate-200 group-hover:text-white">Apple</span>
+</button>
+</div>
+</div>
+<!-- Footer -->
+<p class="text-center text-xs text-slate-500">
+                By logging in, you agree to our <a class="text-slate-400 hover:text-white underline" href="#">Terms of Service</a> &amp; <a class="text-slate-400 hover:text-white underline" href="#">Privacy Policy</a>
+</p>
+</div>
+<!-- Decorative Elements for "Gamification" hints -->
+<div class="fixed top-20 right-[-20px] opacity-10 rotate-12 pointer-events-none">
+<span class="material-symbols-outlined text-[120px] text-white">favorite</span>
+</div>
+<div class="fixed bottom-20 left-[-20px] opacity-5 -rotate-12 pointer-events-none">
+<span class="material-symbols-outlined text-[150px] text-white">shield</span>
+</div>
+</div>
+</body></html>

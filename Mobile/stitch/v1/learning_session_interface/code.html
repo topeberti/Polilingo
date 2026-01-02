@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Learning Session Interface</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+            extend: {
+                colors: {
+                    "primary": "#1a227f",
+                    "background-light": "#f6f6f8",
+                    "background-dark": "#121320",
+                },
+                fontFamily: {
+                    "display": ["Inter", "sans-serif"]
+                },
+                borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                boxShadow: {
+                    "glass": "0 4px 30px rgba(0, 0, 0, 0.1)",
+                    "neon": "0 0 20px rgba(26, 34, 127, 0.4)",
+                }
+            },
+            },
+        }
+    </script>
+<style>
+        /* Custom styles for filled material icons and glassmorphism */
+        .material-symbols-filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        /* Light mode overrides for glass panel */
+        .light-mode-glass {
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* Hide scrollbar for a cleaner mobile app feel */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white antialiased h-screen w-full overflow-hidden flex flex-col selection:bg-primary selection:text-white">
+<!-- Ambient Background Elements -->
+<div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+<!-- Blue glow top left -->
+<div class="absolute top-[-10%] left-[-10%] w-[300px] h-[300px] rounded-full bg-primary/20 blur-[100px] dark:bg-primary/30"></div>
+<!-- Purple/Red glow bottom right -->
+<div class="absolute bottom-[-10%] right-[-10%] w-[300px] h-[300px] rounded-full bg-indigo-500/10 blur-[100px] dark:bg-indigo-500/20"></div>
+</div>
+<!-- Header Section -->
+<header class="relative z-20 flex flex-col gap-5 px-5 pt-8 pb-2 shrink-0">
+<!-- Navigation Row -->
+<div class="flex items-center justify-between">
+<button class="flex h-11 w-11 items-center justify-center rounded-full bg-white/60 dark:bg-white/10 text-slate-700 dark:text-white backdrop-blur-md shadow-sm border border-white/20 dark:border-white/5 hover:bg-white dark:hover:bg-white/20 transition-all active:scale-95">
+<span class="material-symbols-outlined text-[24px]">close</span>
+</button>
+<div class="flex items-center gap-2 rounded-full bg-white/60 dark:bg-white/10 px-4 py-2 backdrop-blur-md shadow-glass border border-white/20 dark:border-white/5">
+<span class="material-symbols-outlined material-symbols-filled text-red-500 text-[22px]">favorite</span>
+<span class="text-sm font-bold tracking-wide">3</span>
+</div>
+</div>
+<!-- Progress Bar Row -->
+<div class="flex flex-col gap-2 mt-1">
+<div class="flex justify-between items-end px-1">
+<span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Question 5 of 20</span>
+<span class="text-xs font-medium text-slate-400 dark:text-slate-500">25%</span>
+</div>
+<!-- Progress Track -->
+<div class="h-2 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-[#2b2e45]">
+<!-- Progress Fill -->
+<div class="h-full w-[25%] rounded-full bg-primary shadow-neon transition-all duration-700 ease-out relative">
+<div class="absolute right-0 top-0 bottom-0 w-full bg-gradient-to-r from-transparent to-white/20" data-alt="Highlight sheen on progress bar"></div>
+</div>
+</div>
+</div>
+</header>
+<!-- Scrollable Question & Answers Area -->
+<main class="relative z-10 flex-1 overflow-y-auto no-scrollbar px-5 pb-32 w-full max-w-lg mx-auto">
+<!-- Question Card -->
+<div class="mt-4 mb-8">
+<div class="light-mode-glass dark:glass-panel rounded-2xl p-6 shadow-lg shadow-slate-200/50 dark:shadow-black/20">
+<h2 class="text-[1.35rem] font-bold leading-snug tracking-tight text-slate-800 dark:text-white">
+                    According to Article 104 of the Spanish Constitution, what is the primary mission of the Security Forces and Corps?
+                </h2>
+</div>
+</div>
+<!-- Answer Options List -->
+<div class="flex flex-col gap-3">
+<!-- Option A -->
+<label class="group relative flex cursor-pointer items-start gap-4 rounded-xl border border-transparent bg-white dark:bg-white/5 p-5 shadow-sm ring-1 ring-black/5 dark:ring-white/10 transition-all duration-200 hover:ring-primary/50 dark:hover:ring-primary/50 active:scale-[0.99]">
+<input class="peer sr-only" name="quiz_answer" type="radio"/>
+<!-- Radio Circle -->
+<div class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 border-slate-300 dark:border-slate-500 peer-checked:border-primary peer-checked:bg-primary transition-colors">
+<div class="h-2 w-2 rounded-full bg-white opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+</div>
+<!-- Text -->
+<div class="flex flex-col">
+<span class="text-[15px] font-medium leading-relaxed text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
+                        To guarantee the collection of taxes.
+                    </span>
+</div>
+<!-- Selected State Border Highlight -->
+<div class="absolute inset-0 rounded-xl border-2 border-primary opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none"></div>
+</label>
+<!-- Option B -->
+<label class="group relative flex cursor-pointer items-start gap-4 rounded-xl border border-transparent bg-white dark:bg-white/5 p-5 shadow-sm ring-1 ring-black/5 dark:ring-white/10 transition-all duration-200 hover:ring-primary/50 dark:hover:ring-primary/50 active:scale-[0.99]">
+<input class="peer sr-only" name="quiz_answer" type="radio"/>
+<div class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 border-slate-300 dark:border-slate-500 peer-checked:border-primary peer-checked:bg-primary transition-colors">
+<div class="h-2 w-2 rounded-full bg-white opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+</div>
+<div class="flex flex-col">
+<span class="text-[15px] font-medium leading-relaxed text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
+                        To protect the free exercise of rights and liberties and guarantee citizen security.
+                    </span>
+</div>
+<div class="absolute inset-0 rounded-xl border-2 border-primary opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none"></div>
+</label>
+<!-- Option C -->
+<label class="group relative flex cursor-pointer items-start gap-4 rounded-xl border border-transparent bg-white dark:bg-white/5 p-5 shadow-sm ring-1 ring-black/5 dark:ring-white/10 transition-all duration-200 hover:ring-primary/50 dark:hover:ring-primary/50 active:scale-[0.99]">
+<input class="peer sr-only" name="quiz_answer" type="radio"/>
+<div class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 border-slate-300 dark:border-slate-500 peer-checked:border-primary peer-checked:bg-primary transition-colors">
+<div class="h-2 w-2 rounded-full bg-white opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+</div>
+<div class="flex flex-col">
+<span class="text-[15px] font-medium leading-relaxed text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
+                        To manage the prison system.
+                    </span>
+</div>
+<div class="absolute inset-0 rounded-xl border-2 border-primary opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none"></div>
+</label>
+</div>
+</main>
+<!-- Sticky Bottom Action -->
+<div class="absolute bottom-0 left-0 right-0 z-30 p-5 bg-gradient-to-t from-background-light via-background-light/95 to-transparent dark:from-background-dark dark:via-background-dark/95 pb-8 pt-12" data-alt="Fade out gradient at the bottom">
+<button class="w-full max-w-lg mx-auto flex cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 bg-primary text-white text-[17px] font-bold leading-normal tracking-wide shadow-lg shadow-primary/30 hover:bg-primary/90 hover:shadow-primary/50 active:scale-[0.98] transition-all">
+<span class="truncate">Check Answer</span>
+</button>
+</div>
+</body></html>

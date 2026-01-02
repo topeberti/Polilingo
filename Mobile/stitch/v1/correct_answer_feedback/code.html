@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Correct Answer Feedback</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1a227f",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#121320",
+                        "success-dark": "#0f2b1d",
+                        "success-light": "#10b981",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(15, 43, 29, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(16, 185, 129, 0.3);
+            box-shadow: 0 -10px 40px -10px rgba(16, 185, 129, 0.2);
+        }
+        .glass-button {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .option-selected-correct {
+            background: rgba(16, 185, 129, 0.2);
+            border: 2px solid #10b981;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased overflow-hidden h-screen w-full flex flex-col relative selection:bg-primary selection:text-white">
+<!-- Background Elements for visual depth -->
+<div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+<div class="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-primary/20 blur-[100px]"></div>
+<div class="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] rounded-full bg-purple-900/20 blur-[100px]"></div>
+</div>
+<!-- Main Content (The Quiz behind the overlay) -->
+<div aria-hidden="true" class="relative z-10 flex flex-col h-full w-full max-w-md mx-auto opacity-40 transition-opacity duration-300 pointer-events-none">
+<!-- Header / Progress Bar -->
+<div class="flex flex-col gap-3 p-4 pt-12">
+<div class="flex gap-6 justify-between items-center">
+<button class="text-white/70 hover:text-white">
+<span class="material-symbols-outlined">close</span>
+</button>
+<div class="rounded-full bg-[#282a43] px-3 py-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-red-500 text-[18px] filled">favorite</span>
+<span class="text-white text-sm font-bold">3</span>
+</div>
+</div>
+<div class="flex justify-between items-end">
+<p class="text-white text-sm font-medium leading-normal mb-2">Pregunta 7/10</p>
+<p class="text-white/60 text-xs mb-2">Legislación</p>
+</div>
+<div class="rounded-full bg-[#393c60] overflow-hidden">
+<div class="h-2 rounded-full bg-primary" style="width: 65%;"></div>
+</div>
+</div>
+<!-- Question Image -->
+<div class="flex w-full px-4 mb-2">
+<div class="w-full gap-1 overflow-hidden bg-[#282a43] aspect-video rounded-xl flex shadow-lg relative border border-white/5">
+<div class="w-full bg-center bg-no-repeat bg-cover aspect-auto rounded-none flex-1 opacity-80" data-alt="Spanish police badge and emblem on a dark uniform texture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA0ua_NY16rEUXneVX9SE8y9toi-z9_Do3SiLQeZprBX7qfGRLdyEuji73ykYkR4RKuP9NlrhTEaTU1bGhZetgbnGnU1lnaCSAuucLHE4pRZ3URT1R6O5RqEgiI7sEDAUSWGADnES-aulhLlwwiNt5XEF3s9Jt4mM1QH61LxjJiBAw9Glwjtm2JI2z3jkUIWmukyQoD7vYdZ7X346TA90WYOHDRvjXXIiT7rSfhSs6fr2WiHW5t46j2YvH4lYpt7Z_NKBj1-QKDPokY");'></div>
+<div class="absolute inset-0 bg-gradient-to-t from-[#121320] to-transparent opacity-60"></div>
+</div>
+</div>
+<!-- Question Text -->
+<div class="px-5 py-2">
+<h2 class="text-white text-xl font-bold leading-tight">
+                ¿Cuál es la función principal de las Fuerzas y Cuerpos de Seguridad según la Constitución?
+            </h2>
+</div>
+<!-- Options -->
+<div class="flex flex-col gap-3 px-4 mt-4 flex-1">
+<div class="glass-button p-4 rounded-xl flex items-center justify-between">
+<span class="text-white/80 font-medium">Garantizar el orden público</span>
+</div>
+<div class="option-selected-correct p-4 rounded-xl flex items-center justify-between shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+<span class="text-white font-bold">Proteger el libre ejercicio de derechos</span>
+<span class="material-symbols-outlined text-[#10b981]">check_circle</span>
+</div>
+<div class="glass-button p-4 rounded-xl flex items-center justify-between">
+<span class="text-white/80 font-medium">Vigilar el tráfico en carreteras</span>
+</div>
+</div>
+</div>
+<!-- Overlay / Bottom Sheet Feedback -->
+<!-- This overlay sits on top of the content -->
+<div class="fixed inset-0 z-50 flex flex-col justify-end">
+<!-- Backdrop Blur area that catches clicks to dismiss if needed -->
+<div class="absolute inset-0 bg-background-dark/60 backdrop-blur-sm transition-all duration-500"></div>
+<!-- The Success Card -->
+<div class="relative w-full max-w-md mx-auto glass-panel rounded-t-[2rem] overflow-hidden flex flex-col animate-[slideUp_0.4s_ease-out]">
+<!-- Handle -->
+<div class="w-full flex justify-center pt-3 pb-1">
+<div class="h-1.5 w-12 rounded-full bg-white/20"></div>
+</div>
+<!-- Content Container -->
+<div class="flex flex-col items-center px-6 pt-2 pb-8 text-center relative">
+<!-- Decorative Glow behind Icon -->
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-green-500/20 rounded-full blur-2xl pointer-events-none"></div>
+<!-- Animated Icon -->
+<div class="relative mt-2 mb-4 bg-gradient-to-br from-green-400 to-green-600 rounded-full p-1 shadow-lg shadow-green-500/30">
+<div class="bg-background-dark rounded-full p-3 border-2 border-green-500/50">
+<span class="material-symbols-outlined text-green-400 text-[48px] block">check_circle</span>
+</div>
+</div>
+<!-- Headline -->
+<h1 class="text-white tracking-tight text-[28px] font-bold leading-tight mb-4 drop-shadow-md">
+                    ¡Respuesta Correcta!
+                </h1>
+<!-- Chips (XP & Streak) -->
+<div class="flex gap-3 justify-center flex-wrap mb-6">
+<!-- XP Chip -->
+<div class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-xl bg-green-900/40 border border-green-500/30 pl-3 pr-5 shadow-sm shadow-green-900/20">
+<span class="material-symbols-outlined text-yellow-400 text-[20px]">star</span>
+<p class="text-green-50 text-sm font-bold leading-normal tracking-wide">+20 XP</p>
+</div>
+<!-- Streak Chip -->
+<div class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-xl bg-white/5 border border-white/10 pl-3 pr-5">
+<span class="material-symbols-outlined text-orange-500 text-[20px]">local_fire_department</span>
+<p class="text-white text-sm font-medium leading-normal">Racha: 5 días</p>
+</div>
+</div>
+<!-- Explanation / Context -->
+<div class="w-full bg-black/20 rounded-xl p-4 mb-6 text-left border border-white/5">
+<div class="flex gap-2 items-start">
+<span class="material-symbols-outlined text-primary/80 text-[20px] mt-0.5">info</span>
+<div>
+<p class="text-gray-300 text-sm leading-relaxed">
+<span class="text-white font-semibold block mb-1">Artículo 104 CE:</span>
+                                Su misión es proteger el libre ejercicio de los derechos y libertades y garantizar la seguridad ciudadana.
+                            </p>
+</div>
+</div>
+</div>
+<!-- Primary Action Button -->
+<button class="w-full group relative flex items-center justify-center gap-2 overflow-hidden rounded-xl bg-primary p-4 transition-all hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-primary/25">
+<span class="text-white text-base font-bold tracking-wide">Siguiente Pregunta</span>
+<span class="material-symbols-outlined text-white transition-transform group-hover:translate-x-1">arrow_forward</span>
+<!-- Shine effect on button -->
+<div class="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent z-10"></div>
+</button>
+<!-- Report Issue Link -->
+<button class="mt-4 text-xs text-white/40 hover:text-white/80 transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">flag</span>
+                    Reportar un problema
+                </button>
+</div>
+<!-- Bottom spacer for safe area -->
+<div class="h-6 w-full"></div>
+</div>
+</div>
+<style>
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes shimmer {
+            100% { transform: translateX(100%); }
+        }
+    </style>
+</body></html>

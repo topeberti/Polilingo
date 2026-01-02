@@ -33,9 +33,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     {
       'name': 'Serious',
       'xp': 50,
-      'icon': '👮',
+      'icon': 'local_police',
       'desc': 'Hardcore prep for the academy.',
       'time': '30m/day',
+      'recommended': true,
     },
     {
       'name': 'Insane',
@@ -62,7 +63,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     if (mounted) {
       setState(() => _isLoading = false);
       if (success) {
-        Navigator.pushReplacementNamed(context, '/dashboard');
+        Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -151,38 +152,32 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
 
   Widget _buildHeader() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
+        color: AppColors.backgroundDark.withOpacity(0.8),
         border: Border(
           bottom: BorderSide(color: Colors.white.withOpacity(0.05)),
         ),
       ),
       child: Column(
         children: [
-          Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.white),
-                onPressed: () => Navigator.pop(context),
-              ),
-              const Expanded(
-                child: Center(
-                  child: Text(
-                    'Profile Setup',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 48),
-            ],
+          // Title
+          const Text(
+            'Profile Setup',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
+          // Progress Bar
           Container(
-            height: 4,
+            height: 6,
             width: double.infinity,
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(2),
+              borderRadius: BorderRadius.circular(3),
             ),
             child: FractionallySizedBox(
               alignment: Alignment.centerLeft,
@@ -190,12 +185,43 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
               child: Container(
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [AppColors.primary, AppColors.accentGold],
+                    colors: [AppColors.primary, Color(0x00D4FF)],
                   ),
-                  borderRadius: BorderRadius.circular(2),
+                  borderRadius: BorderRadius.circular(3),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0x00D4FF).withOpacity(0.5),
+                      blurRadius: 10,
+                    ),
+                  ],
                 ),
               ),
             ),
+          ),
+          const SizedBox(height: 8),
+          // Progress Labels
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'STEP 1 OF 4',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                  color: AppColors.primary.withOpacity(0.8),
+                ),
+              ),
+              Text(
+                'CADET DETAILS',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                  color: AppColors.textSecondaryDark,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -295,88 +321,158 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
 
   Widget _buildGoalCard(Map<String, dynamic> goal) {
     bool isSelected = _selectedGoal == goal['xp'];
+    bool isRecommended = goal['recommended'] == true;
+    bool useMaterialIcon = goal['icon'] == 'local_police';
+
     return GestureDetector(
       onTap: () => setState(() => _selectedGoal = goal['xp']),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.primary.withOpacity(0.2)
-              : Colors.white.withOpacity(0.03),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isSelected ? AppColors.primary : Colors.white12,
-            width: 1.5,
-          ),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(12),
+      child: Stack(
+        children: [
+          Container(
+            margin: EdgeInsets.only(bottom: 12, top: isRecommended ? 8 : 0),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? AppColors.primary.withOpacity(0.3)
+                  : Colors.white.withOpacity(0.03),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isSelected ? AppColors.primary : Colors.white12,
+                width: isSelected ? 2 : 1.5,
               ),
-              alignment: Alignment.center,
-              child: Text(goal['icon'], style: const TextStyle(fontSize: 24)),
+              boxShadow: isSelected
+                  ? [
+                      BoxShadow(
+                        color: AppColors.primary.withOpacity(0.3),
+                        blurRadius: 20,
+                        spreadRadius: 0,
+                      ),
+                    ]
+                  : null,
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        goal['name'],
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+            child: Row(
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? Colors.white.withOpacity(0.1)
+                        : Colors.white.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(12),
+                    border: isSelected
+                        ? Border.all(color: Colors.white.withOpacity(0.1))
+                        : null,
+                  ),
+                  alignment: Alignment.center,
+                  child: useMaterialIcon
+                      ? Icon(
+                          Icons.local_police,
+                          color: isSelected ? Colors.white : Colors.white70,
+                          size: 24,
+                        )
+                      : Text(
+                          goal['icon'],
+                          style: const TextStyle(fontSize: 24),
                         ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            goal['name'],
+                            style: TextStyle(
+                              color: isSelected ? Colors.white : Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          Text(
+                            goal['time'],
+                            style: TextStyle(
+                              color: isSelected
+                                  ? Colors.white.withOpacity(0.8)
+                                  : Colors.white54,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                       Text(
-                        goal['time'],
-                        style: const TextStyle(
-                          color: Colors.white54,
+                        goal['desc'],
+                        style: TextStyle(
+                          color: isSelected
+                              ? Colors.white.withOpacity(0.7)
+                              : Colors.white54,
                           fontSize: 12,
                         ),
                       ),
                     ],
                   ),
-                  Text(
-                    goal['desc'],
-                    style: const TextStyle(color: Colors.white54, fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 16),
-            Column(
-              children: [
-                Text(
-                  '${goal['xp']}',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 18,
-                  ),
                 ),
-                const Text(
-                  'XP',
-                  style: TextStyle(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 10,
-                  ),
+                const SizedBox(width: 16),
+                Column(
+                  children: [
+                    Text(
+                      '${goal['xp']}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 18,
+                      ),
+                    ),
+                    Text(
+                      'XP',
+                      style: TextStyle(
+                        color: isSelected
+                            ? Colors.white.withOpacity(0.8)
+                            : AppColors.primary,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 10,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+          // Recommended Badge
+          if (isRecommended)
+            Positioned(
+              top: 0,
+              right: 16,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0x00D4FF), Color(0x303BC9)],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0x00D4FF).withOpacity(0.3),
+                      blurRadius: 8,
+                    ),
+                  ],
+                ),
+                child: const Text(
+                  'RECOMMENDED',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 9,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1,
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

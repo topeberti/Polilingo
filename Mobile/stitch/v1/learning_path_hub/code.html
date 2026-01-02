@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Polilingo - Learning Path</title>
+<!-- Google Fonts & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1a227f",
+                        "primary-light": "#2d38a3",
+                        "accent-gold": "#fbbf24",
+                        "accent-fire": "#f97316",
+                        "accent-heart": "#ef4444",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#121320",
+                        "surface-dark": "#1c1e30",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "2xl": "1.5rem", "full": "9999px"},
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'bounce-slight': 'bounce 2s infinite',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar hide for cleaner UI */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Glassmorphism utility */
+        .glass-panel {
+            background: rgba(18, 19, 32, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-nav {
+            background: rgba(28, 30, 48, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-dark text-white font-display min-h-screen overflow-x-hidden selection:bg-primary/30">
+<!-- Top Status HUD (Sticky) -->
+<header class="fixed top-0 left-0 right-0 z-50 glass-panel px-4 py-3 transition-all duration-300">
+<div class="flex justify-between items-center max-w-lg mx-auto">
+<!-- Streak -->
+<div class="flex items-center gap-1.5 bg-surface-dark/50 border border-white/5 rounded-full px-3 py-1.5 backdrop-blur-sm">
+<span class="material-symbols-outlined text-accent-fire fill-1" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<span class="text-accent-fire font-bold text-sm">15</span>
+</div>
+<!-- Level/XP -->
+<div class="flex items-center gap-2 relative">
+<!-- Background glow for premium feel -->
+<div class="absolute inset-0 bg-primary/20 blur-xl rounded-full"></div>
+<div class="flex flex-col items-center">
+<span class="text-[10px] text-gray-400 font-medium tracking-wider uppercase mb-0.5">Lvl 12</span>
+<div class="w-24 h-2 bg-gray-800 rounded-full overflow-hidden border border-white/5">
+<div class="h-full bg-gradient-to-r from-blue-600 to-primary w-[65%] rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Lives -->
+<div class="flex items-center gap-1.5 bg-surface-dark/50 border border-white/5 rounded-full px-3 py-1.5 backdrop-blur-sm">
+<span class="material-symbols-outlined text-accent-heart" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="text-accent-heart font-bold text-sm">4/5</span>
+</div>
+</div>
+</header>
+<!-- Main Scrollable Content -->
+<main class="relative z-0 pt-24 pb-28 max-w-lg mx-auto px-4 min-h-screen">
+<!-- Decorative Background Elements -->
+<div class="fixed inset-0 pointer-events-none overflow-hidden z-[-1]">
+<div class="absolute top-[20%] left-[-10%] w-64 h-64 bg-primary/10 rounded-full blur-[80px]"></div>
+<div class="absolute bottom-[20%] right-[-10%] w-80 h-80 bg-blue-900/10 rounded-full blur-[100px]"></div>
+</div>
+<!-- Unit 1 Header -->
+<div class="mb-8 flex flex-col items-center text-center animate-fade-in-up">
+<span class="px-3 py-1 rounded-full bg-primary/20 text-blue-300 text-xs font-bold tracking-widest uppercase border border-primary/20 mb-2">Current Unit</span>
+<h2 class="text-2xl font-bold tracking-tight text-white mb-1">Unit 1: Basic Rights</h2>
+<p class="text-gray-400 text-sm">Constitutional Framework &amp; Liberties</p>
+</div>
+<!-- THE PATH -->
+<div class="relative flex flex-col items-center gap-8">
+<!-- Central connecting line (Tactical look) -->
+<!-- We use a pseudo-element or absolute div for the line. Since nodes zig-zag, we'll keep the line central but subtle. -->
+<div class="absolute left-1/2 top-4 bottom-4 w-1 -translate-x-1/2 bg-gradient-to-b from-accent-gold via-primary to-gray-800/30 rounded-full z-[-1] opacity-50"></div>
+<!-- Node 1: Completed -->
+<div class="relative flex w-full justify-center">
+<div class="relative group cursor-pointer">
+<!-- Glow effect -->
+<div class="absolute inset-0 bg-accent-gold/20 rounded-full blur-md"></div>
+<div class="relative w-20 h-20 rounded-full bg-surface-dark border-2 border-accent-gold flex items-center justify-center shadow-[0_0_15px_rgba(251,191,36,0.2)] hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-accent-gold text-3xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<!-- Star Rating attached -->
+<div class="absolute -bottom-2 bg-gray-900 rounded-full px-2 py-0.5 border border-accent-gold/30 flex gap-0.5">
+<span class="material-symbols-outlined text-accent-gold text-[10px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-accent-gold text-[10px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-accent-gold text-[10px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<!-- Label Side -->
+<div class="absolute top-1/2 -left-28 -translate-y-1/2 text-right w-24">
+<h3 class="text-accent-gold text-xs font-bold uppercase">Completed</h3>
+<p class="text-gray-300 text-xs font-medium leading-tight">Intro to Constitution</p>
+</div>
+</div>
+</div>
+<!-- Node 2: Completed -->
+<div class="relative flex w-full justify-center ml-12">
+<div class="relative group cursor-pointer">
+<div class="absolute inset-0 bg-accent-gold/20 rounded-full blur-md"></div>
+<div class="relative w-16 h-16 rounded-full bg-surface-dark border-2 border-accent-gold flex items-center justify-center shadow-lg hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-accent-gold text-2xl">menu_book</span>
+</div>
+</div>
+</div>
+<!-- Node 3: ACTIVE (Current Lesson) -->
+<div class="relative flex w-full justify-center mr-8 mt-4 mb-4">
+<!-- "START" Tooltip / Callout -->
+<div class="absolute -top-14 left-1/2 -translate-x-1/2 z-20 animate-bounce-slight w-max">
+<div class="bg-white text-primary font-extrabold text-sm px-4 py-2 rounded-xl shadow-[0_0_20px_rgba(255,255,255,0.4)] flex items-center gap-1 after:content-[''] after:absolute after:bottom-[-6px] after:left-1/2 after:-translate-x-1/2 after:border-l-[6px] after:border-l-transparent after:border-r-[6px] after:border-r-transparent after:border-t-[8px] after:border-t-white">
+<span>START</span>
+<span class="text-xs bg-primary/10 px-1.5 py-0.5 rounded text-primary-light">+10 XP</span>
+</div>
+</div>
+<div class="relative group cursor-pointer z-10">
+<!-- Pulsing Rings -->
+<div class="absolute inset-0 rounded-full border-4 border-primary opacity-20 animate-ping"></div>
+<div class="absolute inset-[-4px] rounded-full bg-gradient-to-tr from-primary to-blue-400 opacity-30 blur-sm"></div>
+<!-- Main Button -->
+<div class="relative w-24 h-24 rounded-full bg-gradient-to-b from-primary-light to-primary flex items-center justify-center shadow-[0_4px_20px_rgba(26,34,127,0.6)] border-4 border-[#3c47b5]">
+<span class="material-symbols-outlined text-white text-4xl drop-shadow-md" style="font-variation-settings: 'FILL' 1;">local_police</span>
+</div>
+</div>
+<!-- Label Side -->
+<div class="absolute top-1/2 -right-32 -translate-y-1/2 text-left w-28">
+<h3 class="text-white text-sm font-bold uppercase tracking-wide drop-shadow-sm">Current</h3>
+<p class="text-blue-200 text-xs font-medium leading-tight">Fundamental Rights</p>
+</div>
+</div>
+<!-- Node 4: Locked -->
+<div class="relative flex w-full justify-center ml-0">
+<div class="relative group">
+<div class="w-16 h-16 rounded-full bg-[#1c1e30] border-2 border-gray-700 flex items-center justify-center grayscale opacity-80">
+<span class="material-symbols-outlined text-gray-500 text-2xl">gavel</span>
+</div>
+</div>
+</div>
+<!-- Node 5: Locked -->
+<div class="relative flex w-full justify-center -ml-12">
+<div class="relative group">
+<div class="w-16 h-16 rounded-full bg-[#1c1e30] border-2 border-gray-700 flex items-center justify-center grayscale opacity-60">
+<span class="material-symbols-outlined text-gray-600 text-2xl">policy</span>
+</div>
+</div>
+</div>
+<!-- Node 6: BOSS LEVEL (Locked) -->
+<div class="relative flex w-full justify-center mt-6">
+<div class="relative w-28 h-28 flex items-center justify-center">
+<!-- Outer Hexagon or Shield Shape simulation with rounded corners -->
+<div class="absolute inset-0 bg-gray-800 rounded-2xl rotate-45 border-4 border-gray-700 opacity-50"></div>
+<div class="relative z-10 flex flex-col items-center gap-1 opacity-50">
+<span class="material-symbols-outlined text-gray-400 text-4xl">shield_lock</span>
+<span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Checkpoint</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Section Divider -->
+<div class="my-10 flex items-center justify-center gap-4 opacity-50">
+<div class="h-[1px] w-12 bg-gray-700"></div>
+<span class="material-symbols-outlined text-gray-600">lock</span>
+<div class="h-[1px] w-12 bg-gray-700"></div>
+</div>
+<!-- Next Unit Header (Ghosted) -->
+<div class="mb-4 flex flex-col items-center text-center opacity-40">
+<h2 class="text-xl font-bold tracking-tight text-white mb-1">Unit 2: Penal Code</h2>
+<p class="text-gray-400 text-sm">Crimes &amp; Punishments</p>
+</div>
+<!-- Future Nodes (Ghosted) -->
+<div class="relative flex flex-col items-center gap-6 opacity-30 grayscale pointer-events-none">
+<div class="w-1 bg-gray-800 h-16 absolute top-0 bottom-0 left-1/2 -translate-x-1/2 z-[-1]"></div>
+<div class="w-16 h-16 rounded-full bg-[#1c1e30] border-2 border-gray-700 flex items-center justify-center">
+<span class="material-symbols-outlined text-gray-500">lock</span>
+</div>
+<div class="w-16 h-16 rounded-full bg-[#1c1e30] border-2 border-gray-700 flex items-center justify-center">
+<span class="material-symbols-outlined text-gray-500">lock</span>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Glassmorphic) -->
+<nav class="fixed bottom-0 left-0 right-0 z-50 glass-nav pb-safe pt-2">
+<div class="flex justify-around items-end px-2 pb-3 max-w-lg mx-auto">
+<a class="flex flex-col items-center gap-1 w-16 group" href="#">
+<div class="relative p-1.5 rounded-xl bg-primary/20 text-primary-light">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">map</span>
+</div>
+<span class="text-[10px] font-bold text-white tracking-wide">Path</span>
+</a>
+<a class="flex flex-col items-center gap-1 w-16 group" href="#">
+<div class="relative p-1.5 rounded-xl text-gray-400 group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-2xl">trophy</span>
+</div>
+<span class="text-[10px] font-medium text-gray-400 group-hover:text-white transition-colors">Rank</span>
+</a>
+<!-- Shop Icon with Notification Dot -->
+<a class="flex flex-col items-center gap-1 w-16 group relative" href="#">
+<div class="relative p-1.5 rounded-xl text-gray-400 group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-2xl">storefront</span>
+<span class="absolute top-1 right-1 w-2.5 h-2.5 bg-accent-heart rounded-full border-2 border-[#1c1e30]"></span>
+</div>
+<span class="text-[10px] font-medium text-gray-400 group-hover:text-white transition-colors">Shop</span>
+</a>
+<a class="flex flex-col items-center gap-1 w-16 group" href="#">
+<div class="relative p-1.5 rounded-xl text-gray-400 group-hover:text-white transition-colors">
+<!-- Profile Avatar Placeholder -->
+<div class="w-6 h-6 rounded-full bg-gray-700 overflow-hidden ring-1 ring-gray-600 group-hover:ring-white transition-all">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="User profile avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBe6wadzIfVqBltqa6971gQv4z3mmYrZ_aqgCpSCEYVrjo62NpjWNgSxO8byOsIJwzGJuocBQcAPZt58PryLQY7UxC5tB8mFiVQ-zE3RwYItdhCAkSmC43DQzxp5ZZG8V8pc9WOCb_s4YdlnTCoye4z0emjldXThog8evnB2XwW4JZjlR43hMtCw-qnWMSA6pk-cyCM5VY9JhGLsAzCThVSth0BW493qlTV42lByRSVyw70ZJsPx_n5EIM6zq3rUw3Lw0O0q6O2Wed3"/>
+</div>
+</div>
+<span class="text-[10px] font-medium text-gray-400 group-hover:text-white transition-colors">Profile</span>
+</a>
+</div>
+</nav>
+<!-- Floating Chest Reward (Bonus Element) -->
+<div class="fixed right-4 bottom-24 z-40 animate-bounce-slight cursor-pointer">
+<div class="relative">
+<div class="absolute inset-0 bg-accent-gold/30 blur-lg rounded-full"></div>
+<div class="relative bg-surface-dark border border-accent-gold/40 p-2 rounded-xl shadow-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-accent-gold text-3xl" style="font-variation-settings: 'FILL' 1;">redeem</span>
+</div>
+<div class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border border-surface-dark">!</div>
+</div>
+</div>
+</body></html>
