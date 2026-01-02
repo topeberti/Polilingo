@@ -47,10 +47,52 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     },
   ];
 
+  String? _validateUsername(String username) {
+    if (username.isEmpty) {
+      return 'Please fill in your username';
+    }
+    if (username.length < 3 || username.length > 20) {
+      return 'Username must be between 3 and 20 characters';
+    }
+    final validChars = RegExp(r'^[a-zA-Z0-9_]+$');
+    if (!validChars.hasMatch(username)) {
+      return 'Username can only contain letters, numbers, and underscores';
+    }
+    if (username.startsWith('_')) {
+      return 'Username cannot start with an underscore';
+    }
+    if (username.contains('__')) {
+      return 'Username cannot have consecutive underscores';
+    }
+
+    const reservedNames = {
+      'admin',
+      'teacher',
+      'student',
+      'guest',
+      'support',
+      'root',
+      'system',
+      'moderator',
+      'bot',
+      'settings',
+      'api',
+      'login',
+    };
+    if (reservedNames.contains(username.toLowerCase())) {
+      return 'This username is reserved';
+    }
+
+    return null;
+  }
+
   void _handleComplete() async {
-    if (_usernameController.text.isEmpty) {
+    final username = _usernameController.text.trim();
+    final error = _validateUsername(username);
+
+    if (error != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in your username')),
+        SnackBar(content: Text(error), backgroundColor: Colors.redAccent),
       );
       return;
     }
