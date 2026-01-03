@@ -10,11 +10,14 @@ class AuthProvider extends ChangeNotifier {
   AuthStatus _status = AuthStatus.loading;
   Map<String, dynamic>? _userProfile;
 
+  ApiClient get apiClient => _apiClient;
   AuthStatus get status => _status;
   Map<String, dynamic>? get userProfile => _userProfile;
 
   AuthProvider() {
     _init();
+    // Register the refresh callback with the API client
+    _apiClient.onTokenExpired = refreshToken;
   }
 
   Future<void> _init() async {
@@ -149,6 +152,46 @@ class AuthProvider extends ChangeNotifier {
       debugPrint('Password reset request error: $e');
     }
     return false;
+  }
+
+  Future<bool> refreshToken() async {
+    try {
+      debugPrint('🔄 Attempting to refresh token...');
+      final prefs = await SharedPreferences.getInstance();
+      final refreshToken = prefs.getString('refresh_token');
+
+      if (refreshToken == null) {
+        debugPrint('⚠️ No refresh token found');
+        await logout();
+        return false;
+      }
+
+      final response = await _apiClient.post(
+        '/auth/refresh',
+        body: {'refresh_token': refreshToken},
+        useRefresh: false, // Prevent infinite loop
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final newToken = data['session']['access_token'];
+        final newRefreshToken = data['session']['refresh_token'];
+
+        await _apiClient.setToken(newToken);
+        await prefs.setString('refresh_token', newRefreshToken);
+
+        debugPrint('✅ Token refreshed successfully');
+        return true;
+      } else {
+        debugPrint('❌ Token refresh failed: ${response.statusCode}');
+        await logout();
+        return false;
+      }
+    } catch (e) {
+      debugPrint('❌ Token refresh error: $e');
+      await logout();
+      return false;
+    }
   }
 
   Future<void> logout() async {

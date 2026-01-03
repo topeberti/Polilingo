@@ -3,11 +3,17 @@ import 'package:flutter/material.dart';
 import '../data/api_client.dart';
 
 class LearningProvider extends ChangeNotifier {
-  final ApiClient _apiClient = ApiClient();
+  ApiClient _apiClient;
   List<dynamic> _sessions = [];
   Map<String, dynamic> _lessons = {};
   Set<String> _passedSessionIds = {};
   bool _isLoading = false;
+
+  LearningProvider(this._apiClient);
+
+  void updateApiClient(ApiClient newClient) {
+    _apiClient = newClient;
+  }
 
   List<dynamic> get sessions => _sessions;
   Map<String, dynamic> get lessons => _lessons;
@@ -27,9 +33,14 @@ class LearningProvider extends ChangeNotifier {
         _passedSessionIds = Set<String>.from(
           data['passed_session_ids'].map((id) => id.toString()),
         );
+      } else {
+        debugPrint(
+          '❌ Error fetching available sessions: ${response.statusCode}',
+        );
+        debugPrint('❌ Body: ${response.body}');
       }
     } catch (e) {
-      debugPrint('Error fetching available sessions: $e');
+      debugPrint('❌ Exception fetching available sessions: $e');
     }
 
     _isLoading = false;

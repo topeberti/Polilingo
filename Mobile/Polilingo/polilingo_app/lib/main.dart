@@ -15,7 +15,16 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(create: (_) => LearningProvider()),
+        ChangeNotifierProxyProvider<AuthProvider, LearningProvider>(
+          create: (context) => LearningProvider(
+            Provider.of<AuthProvider>(context, listen: false).apiClient,
+          ),
+          update: (context, auth, previous) {
+            if (previous == null) return LearningProvider(auth.apiClient);
+            previous.updateApiClient(auth.apiClient);
+            return previous;
+          },
+        ),
       ],
       child: const PolilingoApp(),
     ),
